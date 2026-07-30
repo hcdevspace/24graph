@@ -1,0 +1,15 @@
+{
+  "name": "gateway-backend",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Relay server: connects to 24data once, serves live aircraft data to the Gateway frontend over CORS.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "ws": "^8.17.0"
+  }
+}

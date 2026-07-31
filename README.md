@@ -92,4 +92,3 @@ doesn't log "websocket connected," things to check:
 - No real geographic coordinates yet, so the "map" is the schematic route
   tape rather than a true moving map — see the chat history with Claude for
   the plan on sourcing real stud coordinates later.
-"# 24graph" 

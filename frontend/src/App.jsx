@@ -584,7 +584,7 @@ function SettingsPage({ robloxName, setRobloxName, backendUrl, setBackendUrl, li
         <input className="gw-input" placeholder="Your Roblox username" value={robloxName} onChange={(e) => setRobloxName(e.target.value)} />
       </Field>
       <Field label="BACKEND URL">
-        <input className="gw-input" placeholder="http://localhost:8420" value={backendUrl} onChange={(e) => setBackendUrl(e.target.value)} />
+        <input className="gw-input" placeholder="https://two4graph.onrender.com" value={backendUrl} onChange={(e) => setBackendUrl(e.target.value)} />
       </Field>
       <div className="gw-settings-status">
         Status: <span className={liveStatus === "live" ? "gw-live-ok" : ""}>{liveStatus.toUpperCase()}</span>
@@ -762,7 +762,7 @@ export default function Gateway() {
   const [simPlaying, setSimPlaying] = useState(false);
   const [simIdx, setSimIdx] = useState(0);
   const [robloxName, setRobloxName] = useState("");
-  const [backendUrl, setBackendUrl] = useState("http://localhost:8420");
+  const [backendUrl, setBackendUrl] = useState("https://two4graph.onrender.com");
   const [liveStatus, setLiveStatus] = useState("idle");
   const [liveAircraft, setLiveAircraft] = useState(null);
   const [savedRoutes, setSavedRoutes] = useState([]);

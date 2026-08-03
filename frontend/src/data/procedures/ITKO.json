@@ -1,0 +1,649 @@
+{
+  "sids": [
+    {
+      "name": "ASTRO 1 RNAV DEPARTURE",
+      "code": "ASTRO1.ASTRO",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "02"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 20
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "31"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 310
+            },
+            {
+              "t": "T",
+              "d": 180
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "name": "BLANK",
+          "code": "ASTRO1.BLANK",
+          "legs": [
+            {
+              "t": "T",
+              "d": 240
+            },
+            {
+              "t": "F",
+              "n": "GULEG",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 210
+            },
+            {
+              "t": "F",
+              "n": "BLANK",
+              "alt": "2000"
+            }
+          ]
+        },
+        {
+          "name": "PROBE",
+          "code": "ASTRO1.PROBE",
+          "legs": [
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "PIPER",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 165
+            },
+            {
+              "t": "F",
+              "n": "PROBE",
+              "alt": "2000"
+            }
+          ]
+        },
+        {
+          "name": "ONDER",
+          "code": "ASTRO1.ONDER",
+          "legs": [
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "PIPER",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 100
+            },
+            {
+              "t": "F",
+              "n": "ONDER",
+              "alt": "2000"
+            }
+          ]
+        },
+        {
+          "name": "DINER",
+          "code": "ASTRO1.DINER",
+          "legs": [
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "PIPER",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 100
+            },
+            {
+              "t": "F",
+              "n": "ONDER",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 145
+            },
+            {
+              "t": "F",
+              "n": "DINER",
+              "alt": "2000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HONDA 1 RNAV DEPARTURE",
+      "code": "HONDA1.HONDA",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "02"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 20
+            },
+            {
+              "t": "T",
+              "d": 60
+            },
+            {
+              "t": "F",
+              "n": "LETSE"
+            },
+            {
+              "t": "T",
+              "d": 110
+            },
+            {
+              "t": "F",
+              "n": "HONDA",
+              "alt": "2000 (hard altitude)"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "20"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 200
+            },
+            {
+              "t": "T",
+              "d": 65
+            },
+            {
+              "t": "F",
+              "n": "HONDA",
+              "alt": "2000 (hard altitude)"
+            }
+          ]
+        }
+      ],
+      "transitions": []
+    },
+    {
+      "name": "LETSE 1 RNAV DEPARTURE",
+      "code": "LETSE1.KNIFE",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "ALL"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 20
+            },
+            {
+              "t": "T",
+              "d": 60
+            },
+            {
+              "t": "F",
+              "n": "LETSE"
+            },
+            {
+              "t": "T",
+              "d": 110
+            },
+            {
+              "t": "F",
+              "n": "HONDA",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 180
+            },
+            {
+              "t": "F",
+              "n": "KNIFE",
+              "alt": "2000 (hard altitude)"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "name": "RENDR",
+          "code": "LETSE1.RENDR",
+          "legs": [
+            {
+              "t": "T",
+              "d": 260
+            },
+            {
+              "t": "F",
+              "n": "ONDER",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 260
+            },
+            {
+              "t": "F",
+              "n": "RENDR",
+              "alt": "2000"
+            }
+          ]
+        },
+        {
+          "name": "PROBE",
+          "code": "LETSE1.PROBE",
+          "legs": [
+            {
+              "t": "T",
+              "d": 260
+            },
+            {
+              "t": "F",
+              "n": "ONDER",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 230
+            },
+            {
+              "t": "F",
+              "n": "PROBE",
+              "alt": "2000"
+            }
+          ]
+        },
+        {
+          "name": "DINER",
+          "code": "LETSE1.DINER",
+          "legs": [
+            {
+              "t": "T",
+              "d": 185
+            },
+            {
+              "t": "F",
+              "n": "DINER",
+              "alt": "2000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ONDER 1 RNAV DEPARTURE",
+      "code": "ONDER1.ONDER",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "13"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 130
+            },
+            {
+              "t": "T",
+              "d": 175
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "20"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 200
+            },
+            {
+              "t": "T",
+              "d": 145
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "name": "PROBE",
+          "code": "ONDER1.PROBE",
+          "legs": [
+            {
+              "t": "T",
+              "d": 225
+            },
+            {
+              "t": "F",
+              "n": "PROBE",
+              "alt": "2000"
+            }
+          ]
+        },
+        {
+          "name": "DINER",
+          "code": "ONDER1.DINER",
+          "legs": [
+            {
+              "t": "T",
+              "d": 145
+            },
+            {
+              "t": "F",
+              "n": "DINER",
+              "alt": "2000"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "stars": [
+    {
+      "name": "GULEG 1 RNAV ARRIVAL",
+      "code": "GULEG.GULEG1",
+      "entryTransitions": [
+        {
+          "name": "BLANK",
+          "code": "BLANK.GULEG1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "BLANK"
+            },
+            {
+              "t": "T",
+              "d": 30
+            },
+            {
+              "t": "F",
+              "n": "GULEG",
+              "alt": "2000"
+            }
+          ]
+        },
+        {
+          "name": "EURAD",
+          "code": "EURAD.GULEG1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "EURAD"
+            },
+            {
+              "t": "T",
+              "d": 80
+            },
+            {
+              "t": "F",
+              "n": "GULEG",
+              "alt": "2000"
+            }
+          ]
+        }
+      ],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "13"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 15
+            },
+            {
+              "t": "F",
+              "n": "SHIBA"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "20",
+            "31"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 95
+            },
+            {
+              "t": "F",
+              "n": "PIPER"
+            },
+            {
+              "t": "T",
+              "d": 100
+            },
+            {
+              "t": "F",
+              "n": "ONDER"
+            },
+            {
+              "t": "T",
+              "d": 15
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ISLAND 2 RNAV ARRIVAL",
+      "code": "HONDA.ISLND1",
+      "entryTransitions": [],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "13"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 260
+            },
+            {
+              "t": "F",
+              "n": "ONDER",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 280
+            },
+            {
+              "t": "F",
+              "n": "PIPER"
+            },
+            {
+              "t": "T",
+              "d": 340
+            },
+            {
+              "t": "F",
+              "n": "ASTRO"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "20"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 340
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "KNIFE 2 RNAV ARRIVAL",
+      "code": "ONDER.KNIFE1",
+      "entryTransitions": [
+        {
+          "name": "PROBE",
+          "code": "PROBE.KNIFE1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "PROBE"
+            },
+            {
+              "t": "T",
+              "d": 45
+            },
+            {
+              "t": "F",
+              "n": "ONDER",
+              "alt": "2000"
+            }
+          ]
+        },
+        {
+          "name": "DINER",
+          "code": "DINER.KNIFE1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "DINER"
+            },
+            {
+              "t": "T",
+              "d": 325
+            },
+            {
+              "t": "F",
+              "n": "ONDER",
+              "alt": "2000"
+            }
+          ]
+        }
+      ],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "20"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 80
+            },
+            {
+              "t": "F",
+              "n": "KNIFE"
+            },
+            {
+              "t": "T",
+              "d": 360
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PIPER 1 RNAV ARRIVAL",
+      "code": "PIPER.PIPER1",
+      "entryTransitions": [
+        {
+          "name": "RENDR",
+          "code": "RENDR.PIPER1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "RENDR"
+            },
+            {
+              "t": "T",
+              "d": 45
+            },
+            {
+              "t": "F",
+              "n": "PIPER",
+              "alt": "2000"
+            }
+          ]
+        },
+        {
+          "name": "DINER",
+          "code": "DINER.PIPER1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "DINER"
+            },
+            {
+              "t": "T",
+              "d": 325
+            },
+            {
+              "t": "F",
+              "n": "ONDER"
+            },
+            {
+              "t": "T",
+              "d": 280
+            },
+            {
+              "t": "F",
+              "n": "PIPER",
+              "alt": "2000"
+            }
+          ]
+        }
+      ],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "13"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 340
+            },
+            {
+              "t": "F",
+              "n": "ASTRO"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

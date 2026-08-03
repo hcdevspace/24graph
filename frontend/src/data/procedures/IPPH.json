@@ -1,0 +1,662 @@
+{
+  "sids": [
+    {
+      "name": "DINER 2 RNAV DEPARTURE",
+      "code": "DINER2.DINER",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "11"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 111
+            },
+            {
+              "t": "T",
+              "d": 90
+            },
+            {
+              "t": "F",
+              "n": "NOONU"
+            },
+            {
+              "t": "T",
+              "d": 207
+            },
+            {
+              "t": "F",
+              "n": "TALIS",
+              "alt": "1500 (hard altitude)"
+            },
+            {
+              "t": "T",
+              "d": 270
+            },
+            {
+              "t": "F",
+              "n": "ANTNY"
+            },
+            {
+              "t": "T",
+              "d": 265
+            },
+            {
+              "t": "F",
+              "n": "ROMNS"
+            },
+            {
+              "t": "T",
+              "d": 262
+            },
+            {
+              "t": "F",
+              "n": "DINER",
+              "alt": "at or above 3000"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "29"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 291
+            },
+            {
+              "t": "F",
+              "n": "STRAX"
+            },
+            {
+              "t": "T",
+              "d": 212
+            },
+            {
+              "t": "F",
+              "n": "ROMNS"
+            },
+            {
+              "t": "T",
+              "d": 262
+            },
+            {
+              "t": "F",
+              "n": "DINER",
+              "alt": "at or above 3000"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "33"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 331
+            },
+            {
+              "t": "F",
+              "n": "TINDR"
+            },
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "STRAX"
+            },
+            {
+              "t": "T",
+              "d": 212
+            },
+            {
+              "t": "F",
+              "n": "ROMNS"
+            },
+            {
+              "t": "T",
+              "d": 262
+            },
+            {
+              "t": "F",
+              "n": "DINER",
+              "alt": "at or above 3000"
+            }
+          ]
+        }
+      ],
+      "transitions": []
+    },
+    {
+      "name": "CAMEL 2 RNAV DEPARTURE",
+      "code": "CAMEL2.CAMEL",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "11"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 111
+            },
+            {
+              "t": "T",
+              "d": 90
+            },
+            {
+              "t": "F",
+              "n": "NOONU"
+            },
+            {
+              "t": "T",
+              "d": 207
+            },
+            {
+              "t": "F",
+              "n": "TALIS",
+              "alt": "1500 (hard altitude)"
+            },
+            {
+              "t": "T",
+              "d": 223
+            },
+            {
+              "t": "F",
+              "n": "CAMEL",
+              "alt": "at or above 3000"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "29"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 291
+            },
+            {
+              "t": "F",
+              "n": "STRAX"
+            },
+            {
+              "t": "T",
+              "d": 139
+            },
+            {
+              "t": "F",
+              "n": "CAMEL",
+              "alt": "at or above 3000"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "33"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 331
+            },
+            {
+              "t": "T",
+              "d": 241
+            },
+            {
+              "t": "F",
+              "n": "TINDR"
+            },
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "STRAX"
+            },
+            {
+              "t": "T",
+              "d": 139
+            },
+            {
+              "t": "F",
+              "n": "CAMEL",
+              "alt": "at or above 3000"
+            }
+          ]
+        }
+      ],
+      "transitions": []
+    },
+    {
+      "name": "NARXX 1 RNAV DEPARTURE",
+      "code": "NARXX1.NARXX",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "11"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 111
+            },
+            {
+              "t": "T",
+              "d": 90
+            },
+            {
+              "t": "F",
+              "n": "NOONU"
+            },
+            {
+              "t": "T",
+              "d": 207
+            },
+            {
+              "t": "F",
+              "n": "TALIS",
+              "alt": "1500 (hard altitude)"
+            },
+            {
+              "t": "T",
+              "d": 270
+            },
+            {
+              "t": "F",
+              "n": "ANTNY"
+            },
+            {
+              "t": "T",
+              "d": 237
+            },
+            {
+              "t": "F",
+              "n": "NARXX",
+              "alt": "at or above 3000"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "29"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 291
+            },
+            {
+              "t": "F",
+              "n": "STRAX"
+            },
+            {
+              "t": "T",
+              "d": 186
+            },
+            {
+              "t": "F",
+              "n": "NARXX",
+              "alt": "at or above 3000"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "33"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 331
+            },
+            {
+              "t": "T",
+              "d": 241
+            },
+            {
+              "t": "F",
+              "n": "TINDR"
+            },
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "STRAX"
+            },
+            {
+              "t": "T",
+              "d": 186
+            },
+            {
+              "t": "F",
+              "n": "NARXX",
+              "alt": "at or above 3000"
+            }
+          ]
+        }
+      ],
+      "transitions": []
+    }
+  ],
+  "stars": [
+    {
+      "name": "TALIS 2 RNAV ARRIVAL",
+      "code": "TALIS.TALIS2",
+      "entryTransitions": [
+        {
+          "name": "SILVA",
+          "code": "SILVA.TALIS2",
+          "legs": [
+            {
+              "t": "F",
+              "n": "SILVA"
+            },
+            {
+              "t": "T",
+              "d": 31
+            },
+            {
+              "t": "F",
+              "n": "CAMEL",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 43
+            },
+            {
+              "t": "F",
+              "n": "TALIS"
+            }
+          ]
+        },
+        {
+          "name": "CYRIL",
+          "code": "CYRIL.TALIS2",
+          "legs": [
+            {
+              "t": "F",
+              "n": "CYRIL"
+            },
+            {
+              "t": "T",
+              "d": 16
+            },
+            {
+              "t": "F",
+              "n": "DUNKS",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 336
+            },
+            {
+              "t": "F",
+              "n": "TALIS"
+            }
+          ]
+        }
+      ],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "11"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 297
+            },
+            {
+              "t": "F",
+              "n": "ORG VOR",
+              "alt": "2500 (hard altitude)"
+            },
+            {
+              "t": "T",
+              "d": 287
+            },
+            {
+              "t": "F",
+              "n": "STRAX"
+            },
+            {
+              "t": "T",
+              "d": 287
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "15"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 297
+            },
+            {
+              "t": "F",
+              "n": "ORG VOR",
+              "alt": "2500 (hard altitude)"
+            },
+            {
+              "t": "T",
+              "d": 287
+            },
+            {
+              "t": "F",
+              "n": "STRAX"
+            },
+            {
+              "t": "T",
+              "d": 340
+            },
+            {
+              "t": "F",
+              "n": "TINDR",
+              "alt": "at or above 2500"
+            },
+            {
+              "t": "T",
+              "d": 331
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SISTA 2 RNAV ARRIVAL",
+      "code": "TALIS.SISTA2",
+      "entryTransitions": [
+        {
+          "name": "DINER",
+          "code": "DINER.SISTA2",
+          "legs": [
+            {
+              "t": "F",
+              "n": "DINER"
+            },
+            {
+              "t": "T",
+              "d": 82
+            },
+            {
+              "t": "F",
+              "n": "ROMNS",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 85
+            },
+            {
+              "t": "F",
+              "n": "ANTNY",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 90
+            },
+            {
+              "t": "F",
+              "n": "TALIS",
+              "alt": "1500"
+            }
+          ]
+        },
+        {
+          "name": "SILVA",
+          "code": "SILVA.SISTA2",
+          "legs": [
+            {
+              "t": "F",
+              "n": "SILVA"
+            },
+            {
+              "t": "T",
+              "d": 31
+            },
+            {
+              "t": "F",
+              "n": "CAMEL",
+              "alt": "2000"
+            },
+            {
+              "t": "T",
+              "d": 43
+            },
+            {
+              "t": "F",
+              "n": "TALIS",
+              "alt": "1500"
+            }
+          ]
+        }
+      ],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "29",
+            "33"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 82
+            },
+            {
+              "t": "F",
+              "n": "SISTA"
+            },
+            {
+              "t": "T",
+              "d": 67
+            },
+            {
+              "t": "F",
+              "n": "NOONU",
+              "alt": "1000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HONDA 2 RNAV ARRIVAL",
+      "code": "HONDA.HONDA2",
+      "entryTransitions": [],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "11"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 173
+            },
+            {
+              "t": "F",
+              "n": "HAIGH"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "15"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 136
+            },
+            {
+              "t": "F",
+              "n": "KOORI"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "29"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 136
+            },
+            {
+              "t": "F",
+              "n": "KOORI"
+            },
+            {
+              "t": "T",
+              "d": 111
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "33"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 173
+            },
+            {
+              "t": "F",
+              "n": "HAIGH"
+            },
+            {
+              "t": "T",
+              "d": 149
+            },
+            {
+              "t": "F",
+              "n": "STRAX"
+            },
+            {
+              "t": "T",
+              "d": 149
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

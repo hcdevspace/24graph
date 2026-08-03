@@ -1,0 +1,90 @@
+[
+  {
+    "icao": "ITKO",
+    "name": "Haneda"
+  },
+  {
+    "icao": "IPPH",
+    "name": "Perth"
+  },
+  {
+    "icao": "ILKL",
+    "name": ""
+  },
+  {
+    "icao": "ISCM",
+    "name": "Hotdog Fld"
+  },
+  {
+    "icao": "IJAF",
+    "name": "Najaf"
+  },
+  {
+    "icao": "IZOL",
+    "name": "Izolirani"
+  },
+  {
+    "icao": "IGRV",
+    "name": "Grindavik Island"
+  },
+  {
+    "icao": "IMLR",
+    "name": "Mellor Intl"
+  },
+  {
+    "icao": "IRFD",
+    "name": "New Rockford Intl"
+  },
+  {
+    "icao": "ISAU",
+    "name": "Sauthemptona Regl"
+  },
+  {
+    "icao": "IBLT",
+    "name": "Boltic Airfield"
+  },
+  {
+    "icao": "IBTH",
+    "name": "Saint Barthelemy"
+  },
+  {
+    "icao": "ITRC",
+    "name": "Rockford Training Center"
+  },
+  {
+    "icao": "ISKP",
+    "name": "Skopelos Airfield"
+  },
+  {
+    "icao": "ILAR",
+    "name": "Larnaca Intl"
+  },
+  {
+    "icao": "IPAP",
+    "name": "Paphos Intl"
+  },
+  {
+    "icao": "IBAR",
+    "name": ""
+  },
+  {
+    "icao": "IIAB",
+    "name": ""
+  },
+  {
+    "icao": "IHEN",
+    "name": ""
+  },
+  {
+    "icao": "IBTH",
+    "name": "Saint Barthelemy"
+  },
+  {
+    "icao": "IBLT",
+    "name": "Boltic Airfield"
+  },
+  {
+    "icao": "IGAR",
+    "name": "Garry AFB"
+  }
+]

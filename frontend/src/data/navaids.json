@@ -1,0 +1,176 @@
+[
+  {
+    "name": "GRINDAVIK",
+    "ident": "GVK",
+    "freq": "112.320",
+    "type": "VOR"
+  },
+  {
+    "name": "MELLOR",
+    "ident": "MLR",
+    "freq": "114.75",
+    "type": "VOR"
+  },
+  {
+    "name": "GARRY",
+    "ident": "GRY",
+    "freq": "111.90",
+    "type": "VOR"
+  },
+  {
+    "name": "SAUTHEMPTONA",
+    "ident": "SAU",
+    "freq": "115.35",
+    "type": "VOR"
+  },
+  {
+    "name": "ROCKFORD",
+    "ident": "RFD",
+    "freq": "113.55",
+    "type": "VOR"
+  },
+  {
+    "name": "BLADES",
+    "ident": "BLA",
+    "freq": "117.45",
+    "type": "VOR"
+  },
+  {
+    "name": "TRAINING CENTRE",
+    "ident": "TRN",
+    "freq": "113.10",
+    "type": "VOR"
+  },
+  {
+    "name": "LARNACA",
+    "ident": "LCK",
+    "freq": "112.80",
+    "type": "VOR"
+  },
+  {
+    "name": "PAPHOS",
+    "ident": "PFO",
+    "freq": "117.90",
+    "type": "VOR"
+  },
+  {
+    "name": "IZOLIRANI",
+    "ident": "IZO",
+    "freq": "117.530",
+    "type": "VOR"
+  },
+  {
+    "name": "PERTH",
+    "ident": "PER",
+    "freq": "115.430",
+    "type": "VOR"
+  },
+  {
+    "name": "NAJAF",
+    "ident": "NJF",
+    "freq": "112.45",
+    "type": "VOR"
+  },
+  {
+    "name": "HANEDA",
+    "ident": "HME",
+    "freq": "112.20",
+    "type": "VOR"
+  },
+  {
+    "name": "HAWKIN",
+    "ident": "HAW",
+    "type": "NDB"
+  },
+  {
+    "name": "GOLDEN",
+    "ident": "GOL",
+    "type": "NDB"
+  },
+  {
+    "name": "CROIS NOOB",
+    "ident": "COC",
+    "type": "NDB"
+  },
+  {
+    "name": "BRAINSTORM",
+    "ident": "BTM",
+    "type": "NDB"
+  },
+  {
+    "name": "ORANGE",
+    "ident": "ORG",
+    "type": "NDB"
+  },
+  {
+    "name": "HOTDOG",
+    "ident": "HOT",
+    "type": "NDB"
+  },
+  {
+    "name": "RESURGE",
+    "ident": "RES",
+    "type": "NDB"
+  },
+  {
+    "name": "ROMENS",
+    "ident": "ROM",
+    "type": "NDB"
+  },
+  {
+    "name": "DELIVERY",
+    "ident": "DEL",
+    "type": "NDB"
+  },
+  {
+    "name": "CLEARANCE",
+    "ident": "CLR",
+    "type": "NDB"
+  },
+  {
+    "name": "DETOX",
+    "ident": "DET",
+    "type": "NDB"
+  },
+  {
+    "name": "KINDLE",
+    "ident": "KIN",
+    "type": "NDB"
+  },
+  {
+    "name": "CANDLE",
+    "ident": "CAN",
+    "type": "NDB"
+  },
+  {
+    "name": "HUNTER",
+    "ident": "HUT",
+    "type": "NDB"
+  },
+  {
+    "name": "DIRECTOR",
+    "ident": "DIR",
+    "type": "NDB"
+  },
+  {
+    "name": "KROTEN",
+    "ident": "KRT",
+    "type": "NDB"
+  },
+  {
+    "name": "TRESIN",
+    "ident": "TRE",
+    "type": "NDB"
+  },
+  {
+    "name": "DIZZIER",
+    "ident": "DIZ",
+    "type": "NDB"
+  },
+  {
+    "name": "Skopelos",
+    "ident": "SKP",
+    "freq": "113.4",
+    "type": "VOR"
+  }
+]

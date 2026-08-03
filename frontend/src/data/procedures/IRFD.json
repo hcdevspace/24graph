@@ -1,0 +1,1632 @@
+{
+  "sids": [
+    {
+      "name": "DARRK 3 RNAV DEPARTURE",
+      "code": "DARRK3.DARRK",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "07L",
+            "07C",
+            "07R"
+          ],
+          "legs": []
+        },
+        {
+          "rwys": [
+            "25L"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "DOCKR",
+              "alt": "at or above 1000"
+            },
+            {
+              "t": "T",
+              "d": 261
+            },
+            {
+              "t": "F",
+              "n": "QURAN",
+              "alt": "at or above 2000"
+            },
+            {
+              "t": "T",
+              "d": 291
+            },
+            {
+              "t": "F",
+              "n": "EXMOR"
+            },
+            {
+              "t": "T",
+              "d": 322
+            },
+            {
+              "t": "F",
+              "n": "DARRK",
+              "alt": "at or above 3000"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "25C",
+            "25R"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "DLREY",
+              "alt": "at or above 1000"
+            },
+            {
+              "t": "T",
+              "d": 273
+            },
+            {
+              "t": "F",
+              "n": "ALOHA",
+              "alt": "at or above 2500"
+            },
+            {
+              "t": "T",
+              "d": 294
+            },
+            {
+              "t": "F",
+              "n": "DARRK",
+              "alt": "at or above 3000"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "name": "SEEKS",
+          "code": "DARRK3.SEEKS",
+          "legs": [
+            {
+              "t": "T",
+              "d": 311
+            },
+            {
+              "t": "F",
+              "n": "BEANS"
+            },
+            {
+              "t": "T",
+              "d": 234
+            },
+            {
+              "t": "F",
+              "n": "DINTY"
+            },
+            {
+              "t": "F",
+              "n": "SEEKS"
+            }
+          ]
+        },
+        {
+          "name": "SPACE",
+          "code": "DARRK3.SPACE",
+          "legs": [
+            {
+              "t": "T",
+              "d": 311
+            },
+            {
+              "t": "F",
+              "n": "BEANS"
+            },
+            {
+              "t": "T",
+              "d": 301
+            },
+            {
+              "t": "F",
+              "n": "RIZIN"
+            },
+            {
+              "t": "T",
+              "d": 304
+            },
+            {
+              "t": "F",
+              "n": "BLANK"
+            },
+            {
+              "t": "F",
+              "n": "SPACE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "KENED 2 RNAV DEPARTURE",
+      "code": "KENED2.KENED",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "07L",
+            "07C",
+            "07R"
+          ],
+          "legs": []
+        },
+        {
+          "rwys": [
+            "25L",
+            "25C",
+            "25R"
+          ],
+          "legs": []
+        }
+      ],
+      "transitions": [
+        {
+          "name": "RENDR",
+          "code": "KENED2.RENDR",
+          "legs": [
+            {
+              "t": "F",
+              "n": "KUNAV"
+            },
+            {
+              "t": "T",
+              "d": 360
+            },
+            {
+              "t": "F",
+              "n": "KENED",
+              "alt": "3000"
+            },
+            {
+              "t": "T",
+              "d": 360
+            },
+            {
+              "t": "F",
+              "n": "WELSH",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 360
+            },
+            {
+              "t": "F",
+              "n": "RENDR",
+              "alt": "1000"
+            }
+          ]
+        },
+        {
+          "name": "JOOPY",
+          "code": "KENED2.JOOPY",
+          "legs": [
+            {
+              "t": "F",
+              "n": "KUNAV"
+            },
+            {
+              "t": "T",
+              "d": 360
+            },
+            {
+              "t": "F",
+              "n": "KENED",
+              "alt": "3000"
+            },
+            {
+              "t": "T",
+              "d": 360
+            },
+            {
+              "t": "F",
+              "n": "WELSH",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 36
+            },
+            {
+              "t": "F",
+              "n": "PROBE",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 51
+            },
+            {
+              "t": "F",
+              "n": "JOOPY",
+              "alt": "1000"
+            }
+          ]
+        },
+        {
+          "name": "DINER",
+          "code": "KENED2.DINER",
+          "legs": [
+            {
+              "t": "F",
+              "n": "KUNAV"
+            },
+            {
+              "t": "T",
+              "d": 360
+            },
+            {
+              "t": "F",
+              "n": "KENED",
+              "alt": "3000"
+            },
+            {
+              "t": "T",
+              "d": 55
+            },
+            {
+              "t": "F",
+              "n": "INDEX",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 49
+            },
+            {
+              "t": "F",
+              "n": "NKITA",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "DINER",
+              "alt": "1200"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LOGAN 4 RNAV DEPARTURE",
+      "code": "LOGAN4.LOGAN",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "25L"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "DOCKR",
+              "alt": "at or above 1000"
+            },
+            {
+              "t": "T",
+              "d": 261
+            },
+            {
+              "t": "F",
+              "n": "QURAN",
+              "alt": "at or above 2000"
+            },
+            {
+              "t": "T",
+              "d": 291
+            },
+            {
+              "t": "F",
+              "n": "EXMOR"
+            },
+            {
+              "t": "T",
+              "d": 349
+            },
+            {
+              "t": "F",
+              "n": "LOGAN",
+              "alt": "at or above 3000"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "25C",
+            "25R"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "DLREY",
+              "alt": "at or above 1000"
+            },
+            {
+              "t": "T",
+              "d": 271
+            },
+            {
+              "t": "F",
+              "n": "DAALE"
+            },
+            {
+              "t": "T",
+              "d": 301
+            },
+            {
+              "t": "F",
+              "n": "LOGAN",
+              "alt": "at or above 3000"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "name": "RENDR",
+          "code": "LOGAN4.RENDR",
+          "legs": [
+            {
+              "t": "T",
+              "d": 8
+            },
+            {
+              "t": "T",
+              "d": 358
+            },
+            {
+              "t": "F",
+              "n": "BUCFA",
+              "alt": "1800"
+            },
+            {
+              "t": "T",
+              "d": 33
+            },
+            {
+              "t": "F",
+              "n": "SKYDV",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "WELSH"
+            },
+            {
+              "t": "T",
+              "d": 360
+            },
+            {
+              "t": "F",
+              "n": "RENDR",
+              "alt": "1000"
+            }
+          ]
+        },
+        {
+          "name": "DINER",
+          "code": "LOGAN4.DINER",
+          "legs": [
+            {
+              "t": "T",
+              "d": 8
+            },
+            {
+              "t": "T",
+              "d": 358
+            },
+            {
+              "t": "F",
+              "n": "BUCFA",
+              "alt": "1800"
+            },
+            {
+              "t": "T",
+              "d": 33
+            },
+            {
+              "t": "F",
+              "n": "SKYDV",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "WELSH"
+            },
+            {
+              "t": "T",
+              "d": 71
+            },
+            {
+              "t": "F",
+              "n": "MDWAY",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "DINER",
+              "alt": "1200"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OSHNN 1 RNAV DEPARTURE",
+      "code": "OSHNN1.OSHNN",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "25L"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "HIIPR",
+              "alt": "at or above 1700"
+            },
+            {
+              "t": "T",
+              "d": 210
+            },
+            {
+              "t": "F",
+              "n": "SHAEF"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "25C"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "FABRA",
+              "alt": "at or above 1700"
+            },
+            {
+              "t": "T",
+              "d": 205
+            },
+            {
+              "t": "F",
+              "n": "SHAEF"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "25R"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "FABRA",
+              "alt": "at or above 1700"
+            },
+            {
+              "t": "T",
+              "d": 205
+            },
+            {
+              "t": "F",
+              "n": "SHAEF"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "name": "SILVA",
+          "code": "OSHNN1.SILVA",
+          "legs": [
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "PEVEE"
+            },
+            {
+              "t": "T",
+              "d": 90
+            },
+            {
+              "t": "F",
+              "n": "HOLTZ"
+            },
+            {
+              "t": "F",
+              "n": "OSHNN",
+              "alt": "at or above 3000"
+            },
+            {
+              "t": "T",
+              "d": 18
+            },
+            {
+              "t": "F",
+              "n": "CAHIL",
+              "alt": "1800"
+            },
+            {
+              "t": "F",
+              "n": "ZOOMM",
+              "alt": "1500"
+            },
+            {
+              "t": "T",
+              "d": 31
+            },
+            {
+              "t": "F",
+              "n": "SEBBY",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "ATPEV",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "ARCUS",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "OCEEN",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 59
+            },
+            {
+              "t": "F",
+              "n": "SILVA",
+              "alt": "1000"
+            }
+          ]
+        },
+        {
+          "name": "CYRIL",
+          "code": "OSHNN1.CYRIL",
+          "legs": [
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "PEVEE"
+            },
+            {
+              "t": "T",
+              "d": 90
+            },
+            {
+              "t": "F",
+              "n": "HOLTZ"
+            },
+            {
+              "t": "F",
+              "n": "OSHNN",
+              "alt": "at or above 3000"
+            },
+            {
+              "t": "T",
+              "d": 18
+            },
+            {
+              "t": "F",
+              "n": "CAHIL",
+              "alt": "1800"
+            },
+            {
+              "t": "F",
+              "n": "ZOOMM",
+              "alt": "1500"
+            },
+            {
+              "t": "T",
+              "d": 31
+            },
+            {
+              "t": "F",
+              "n": "SEBBY",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "ATPEV",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "ARCUS",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "OCEEN",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 59
+            },
+            {
+              "t": "F",
+              "n": "SILVA",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 76
+            },
+            {
+              "t": "F",
+              "n": "GOOSE",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "CYRIL",
+              "alt": "1000"
+            }
+          ]
+        },
+        {
+          "name": "GRASS",
+          "code": "OSHNN1.GRASS",
+          "legs": [
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "PEVEE"
+            },
+            {
+              "t": "T",
+              "d": 90
+            },
+            {
+              "t": "F",
+              "n": "HOLTZ"
+            },
+            {
+              "t": "F",
+              "n": "OSHNN",
+              "alt": "at or above 3000"
+            },
+            {
+              "t": "T",
+              "d": 18
+            },
+            {
+              "t": "F",
+              "n": "CAHIL",
+              "alt": "1800"
+            },
+            {
+              "t": "F",
+              "n": "ZOOMM",
+              "alt": "1500"
+            },
+            {
+              "t": "T",
+              "d": 75
+            },
+            {
+              "t": "F",
+              "n": "JAMSI",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 107
+            },
+            {
+              "t": "F",
+              "n": "PMPKN",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "GRASS",
+              "alt": "1000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TRAINING 1 RNAV DEPARTURE",
+      "code": "TRN1.TRN",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "25L"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "DOCKR",
+              "alt": "at or above 1000"
+            },
+            {
+              "t": "T",
+              "d": 170
+            },
+            {
+              "t": "F",
+              "n": "WEILR"
+            },
+            {
+              "t": "T",
+              "d": 105
+            },
+            {
+              "t": "F",
+              "n": "TRN VOR"
+            },
+            {
+              "t": "F",
+              "n": "TRN VOR"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "25C",
+            "25R"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "DLREY",
+              "alt": "at or above 1000"
+            },
+            {
+              "t": "T",
+              "d": 200
+            },
+            {
+              "t": "F",
+              "n": "PEPUL"
+            },
+            {
+              "t": "T",
+              "d": 158
+            },
+            {
+              "t": "F",
+              "n": "HAYNK"
+            },
+            {
+              "t": "T",
+              "d": 75
+            },
+            {
+              "t": "F",
+              "n": "TRN VOR"
+            },
+            {
+              "t": "F",
+              "n": "TRN VOR"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "name": "SILVA",
+          "code": "TRN1.SILVA",
+          "legs": [
+            {
+              "t": "T",
+              "d": 30
+            },
+            {
+              "t": "F",
+              "n": "MDWST",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "ATPEV",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "OCEEN",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 60
+            },
+            {
+              "t": "F",
+              "n": "SILVA",
+              "alt": "1000"
+            }
+          ]
+        },
+        {
+          "name": "CYRIL",
+          "code": "TRN1.CYRIL",
+          "legs": [
+            {
+              "t": "T",
+              "d": 30
+            },
+            {
+              "t": "F",
+              "n": "MDWST",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "ATPEV",
+              "alt": "1000"
+            },
+            {
+              "t": "F",
+              "n": "OCEEN",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 60
+            },
+            {
+              "t": "F",
+              "n": "SILVA",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 75
+            },
+            {
+              "t": "F",
+              "n": "CYRIL",
+              "alt": "1000"
+            }
+          ]
+        },
+        {
+          "name": "GRASS",
+          "code": "TRN1.GRASS",
+          "legs": [
+            {
+              "t": "T",
+              "d": 68
+            },
+            {
+              "t": "F",
+              "n": "GODLU",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 50
+            },
+            {
+              "t": "F",
+              "n": "JAMSI",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 110
+            },
+            {
+              "t": "F",
+              "n": "GRASS",
+              "alt": "1000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "WNNDY 3 RNAV DEPARTURE",
+      "code": "WNNDY3.WNNDY",
+      "rwyProcs": [
+        {
+          "rwys": [
+            "ALL"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "MJSTY",
+              "alt": "at or above 1000"
+            },
+            {
+              "t": "T",
+              "d": 45
+            },
+            {
+              "t": "F",
+              "n": "WNNDY",
+              "alt": "1000"
+            }
+          ]
+        }
+      ],
+      "transitions": [
+        {
+          "name": "NARXX",
+          "code": "WNNDY3.NARXX",
+          "legs": [
+            {
+              "t": "T",
+              "d": 360
+            },
+            {
+              "t": "F",
+              "n": "GREEK",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 20
+            },
+            {
+              "t": "F",
+              "n": "NARXX",
+              "alt": "1000"
+            }
+          ]
+        },
+        {
+          "name": "SILVA",
+          "code": "WNNDY3.SILVA",
+          "legs": [
+            {
+              "t": "F",
+              "n": "OCEEN",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 56
+            },
+            {
+              "t": "F",
+              "n": "SILVA",
+              "alt": "1000"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "stars": [
+    {
+      "name": "BEANS 1 RNAV ARRIVAL",
+      "code": "BEANS.BEANS1",
+      "entryTransitions": [
+        {
+          "name": "SPACE",
+          "code": "SPACE.BEANS1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "SPACE"
+            },
+            {
+              "t": "T",
+              "d": 120
+            },
+            {
+              "t": "F",
+              "n": "BEANS",
+              "alt": "1000"
+            }
+          ]
+        },
+        {
+          "name": "SEEKS",
+          "code": "SEEKS.BEANS1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "SEEKS"
+            },
+            {
+              "t": "T",
+              "d": 54
+            },
+            {
+              "t": "F",
+              "n": "BEANS",
+              "alt": "1000"
+            }
+          ]
+        }
+      ],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "07L",
+            "07C",
+            "07R"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 103
+            },
+            {
+              "t": "F",
+              "n": "LOGAN"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "25L",
+            "25C",
+            "25R"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 68
+            },
+            {
+              "t": "F",
+              "n": "BRDGE"
+            },
+            {
+              "t": "T",
+              "d": 68
+            },
+            {
+              "t": "F",
+              "n": "ICTAM"
+            },
+            {
+              "t": "T",
+              "d": 80
+            },
+            {
+              "t": "F",
+              "n": "HAWFA",
+              "alt": "at or above 2000"
+            },
+            {
+              "t": "T",
+              "d": 80
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "JAMSI 1 RNAV ARRIVAL",
+      "code": "JAMSI.JAMSI1",
+      "entryTransitions": [
+        {
+          "name": "ANYMS",
+          "code": "ANYMS.JAMSI1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "ANYMS"
+            },
+            {
+              "t": "T",
+              "d": 239
+            },
+            {
+              "t": "H",
+              "n": "JAMSI"
+            },
+            {
+              "t": "F",
+              "n": "JAMSI",
+              "alt": "1500"
+            }
+          ]
+        },
+        {
+          "name": "GRASS",
+          "code": "GRASS.JAMSI1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "GRASS"
+            },
+            {
+              "t": "T",
+              "d": 290
+            },
+            {
+              "t": "T",
+              "d": 110
+            },
+            {
+              "t": "H",
+              "n": "JAMSI"
+            },
+            {
+              "t": "F",
+              "n": "JAMSI",
+              "alt": "1500"
+            }
+          ]
+        }
+      ],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "07L",
+            "07C",
+            "07R"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 228
+            },
+            {
+              "t": "F",
+              "n": "GODLU"
+            },
+            {
+              "t": "T",
+              "d": 262
+            },
+            {
+              "t": "F",
+              "n": "PEPUL",
+              "alt": "1300 (hard altitude, not 'at or above')"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "25L",
+            "25C",
+            "25R"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 347
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "POPPY 3 RNAV ARRIVAL",
+      "code": "SETHR.POPPY3",
+      "entryTransitions": [
+        {
+          "name": "NARXX",
+          "code": "NARXX.POPPY3",
+          "legs": [
+            {
+              "t": "F",
+              "n": "NARXX"
+            },
+            {
+              "t": "T",
+              "d": 223
+            },
+            {
+              "t": "F",
+              "n": "GAVIN",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 208
+            },
+            {
+              "t": "H",
+              "n": "SETHR"
+            },
+            {
+              "t": "F",
+              "n": "SETHR"
+            }
+          ]
+        },
+        {
+          "name": "CYRIL",
+          "code": "CYRIL.POPPY3",
+          "legs": [
+            {
+              "t": "F",
+              "n": "CYRIL"
+            },
+            {
+              "t": "T",
+              "d": 261
+            },
+            {
+              "t": "F",
+              "n": "SILVA",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 240
+            },
+            {
+              "t": "F",
+              "n": "OCEEN",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 255
+            },
+            {
+              "t": "H",
+              "n": "SETHR"
+            },
+            {
+              "t": "F",
+              "n": "SETHR"
+            }
+          ]
+        },
+        {
+          "name": "CAWZE",
+          "code": "CAWZE.POPPY3",
+          "legs": [
+            {
+              "t": "F",
+              "n": "CAWZE"
+            },
+            {
+              "t": "T",
+              "d": 287
+            },
+            {
+              "t": "F",
+              "n": "OCEEN",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 255
+            },
+            {
+              "t": "H",
+              "n": "SETHR"
+            },
+            {
+              "t": "F",
+              "n": "SETHR"
+            }
+          ]
+        }
+      ],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "07L",
+            "07C",
+            "07R"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 180
+            },
+            {
+              "t": "F",
+              "n": "POPPY",
+              "alt": "at or above 1200"
+            },
+            {
+              "t": "T",
+              "d": 270
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "25L",
+            "25C",
+            "25R"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 180
+            },
+            {
+              "t": "F",
+              "n": "POPPY",
+              "alt": "at or above 1200"
+            },
+            {
+              "t": "T",
+              "d": 157
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "KUNAV 2 RNAV ARRIVAL",
+      "code": "KENED.KUNAV1",
+      "entryTransitions": [
+        {
+          "name": "RENDR",
+          "code": "RENDR.KUNAV1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "RENDR"
+            },
+            {
+              "t": "T",
+              "d": 180
+            },
+            {
+              "t": "F",
+              "n": "WELSH"
+            },
+            {
+              "t": "H",
+              "n": "KENED"
+            },
+            {
+              "t": "F",
+              "n": "KENED"
+            },
+            {
+              "t": "F",
+              "n": "KUNAV",
+              "alt": "2000"
+            }
+          ]
+        },
+        {
+          "name": "DINER",
+          "code": "DINER.KUNAV1",
+          "legs": [
+            {
+              "t": "F",
+              "n": "DINER"
+            },
+            {
+              "t": "T",
+              "d": 210
+            },
+            {
+              "t": "F",
+              "n": "SURGE",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 243
+            },
+            {
+              "t": "F",
+              "n": "INDEX"
+            },
+            {
+              "t": "T",
+              "d": 235
+            },
+            {
+              "t": "F",
+              "n": "KENED"
+            },
+            {
+              "t": "F",
+              "n": "KUNAV",
+              "alt": "2000"
+            }
+          ]
+        }
+      ],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "07L",
+            "07C",
+            "07R"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 230
+            },
+            {
+              "t": "F",
+              "n": "BRIDGE"
+            },
+            {
+              "t": "T",
+              "d": 190
+            },
+            {
+              "t": "F",
+              "n": "ALISO"
+            },
+            {
+              "t": "T",
+              "d": 115
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "25L",
+            "25C",
+            "25R"
+          ],
+          "legs": [
+            {
+              "t": "T",
+              "d": 120
+            },
+            {
+              "t": "F",
+              "n": "HAWFA"
+            },
+            {
+              "t": "T",
+              "d": 130
+            },
+            {
+              "t": "F",
+              "n": "SWEET",
+              "alt": "1500"
+            },
+            {
+              "t": "T",
+              "d": 70
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SUNST 3 RNAV ARRIVAL",
+      "code": "SUNST.SUNST3",
+      "entryTransitions": [],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "07L",
+            "07C",
+            "07R"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "SUNST"
+            },
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "LAAMP",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 160
+            },
+            {
+              "t": "F",
+              "n": "LOGAN",
+              "alt": "1000"
+            }
+          ]
+        },
+        {
+          "rwys": [
+            "25L",
+            "25C",
+            "25R"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "SUNST"
+            },
+            {
+              "t": "T",
+              "d": 120
+            },
+            {
+              "t": "F",
+              "n": "BUCFA",
+              "alt": "2000 (hard altitude)"
+            },
+            {
+              "t": "T",
+              "d": 103
+            },
+            {
+              "t": "F",
+              "n": "HAWFA",
+              "alt": "1000"
+            },
+            {
+              "t": "T",
+              "d": 103
+            },
+            {
+              "t": "F",
+              "n": "SWEET",
+              "alt": "at or below 1500"
+            },
+            {
+              "t": "T",
+              "d": 67
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GORDO 1 ARRIVAL",
+      "code": "GORDO.GORDO1",
+      "entryTransitions": [],
+      "rwyProcs": [
+        {
+          "rwys": [
+            "07L",
+            "07C"
+          ],
+          "legs": [
+            {
+              "t": "F",
+              "n": "SKP"
+            },
+            {
+              "t": "F",
+              "n": "MOSSY"
+            },
+            {
+              "t": "T",
+              "d": 247
+            },
+            {
+              "t": "F",
+              "n": "GORDO"
+            },
+            {
+              "t": "F",
+              "n": "GODLU"
+            },
+            {
+              "t": "F",
+              "n": "TRN"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { Plane, Radio, ChevronRight, ChevronDown, X, Play, Pause, RotateCcw, Wifi, WifiOff, Navigation2 } from "lucide-react";
+import {
+  Plane, Radio, ChevronRight, ChevronDown, X, Play, Pause, RotateCcw, Wifi, WifiOff, Navigation2,
+  Route, MapPin, Waypoints, Signpost, Layers, Map as MapIcon, CloudSun, Gauge, Fuel, FileText,
+  Settings as SettingsIcon, Sun, Moon, User, Star, Edit3, Share2, ArrowLeftRight, Trash2, Plus,
+  ZoomIn, ZoomOut, Maximize2, ChevronsUpDown, Save, FolderOpen, Check,
+} from "lucide-react";
 
-const RFD_DATA = {"sids": {"IRFD": [{"name": "DARRK 3 RNAV DEPARTURE", "code": "DARRK3.DARRK", "rwyProcs": [{"rwys": ["07L", "07C", "07R"], "legs": []}, {"rwys": ["25L"], "legs": [{"t": "F", "n": "DOCKR", "alt": "at or above 1000"}, {"t": "T", "d": 261}, {"t": "F", "n": "QURAN", "alt": "at or above 2000"}, {"t": "T", "d": 291}, {"t": "F", "n": "EXMOR"}, {"t": "T", "d": 322}, {"t": "F", "n": "DARRK", "alt": "at or above 3000"}]}, {"rwys": ["25C", "25R"], "legs": [{"t": "F", "n": "DLREY", "alt": "at or above 1000"}, {"t": "T", "d": 273}, {"t": "F", "n": "ALOHA", "alt": "at or above 2500"}, {"t": "T", "d": 294}, {"t": "F", "n": "DARRK", "alt": "at or above 3000"}]}], "transitions": [{"name": "SEEKS", "code": "DARRK3.SEEKS", "legs": [{"t": "T", "d": 311}, {"t": "F", "n": "BEANS"}, {"t": "T", "d": 234}, {"t": "F", "n": "DINTY"}, {"t": "F", "n": "SEEKS"}]}, {"name": "SPACE", "code": "DARRK3.SPACE", "legs": [{"t": "T", "d": 311}, {"t": "F", "n": "BEANS"}, {"t": "T", "d": 301}, {"t": "F", "n": "RIZIN"}, {"t": "T", "d": 304}, {"t": "F", "n": "BLANK"}, {"t": "F", "n": "SPACE"}]}]}, {"name": "KENED 2 RNAV DEPARTURE", "code": "KENED2.KENED", "rwyProcs": [{"rwys": ["07L", "07C", "07R"], "legs": []}, {"rwys": ["25L", "25C", "25R"], "legs": []}], "transitions": [{"name": "RENDR", "code": "KENED2.RENDR", "legs": [{"t": "F", "n": "KUNAV"}, {"t": "T", "d": 360}, {"t": "F", "n": "KENED", "alt": "3000"}, {"t": "T", "d": 360}, {"t": "F", "n": "WELSH", "alt": "1000"}, {"t": "T", "d": 360}, {"t": "F", "n": "RENDR", "alt": "1000"}]}, {"name": "JOOPY", "code": "KENED2.JOOPY", "legs": [{"t": "F", "n": "KUNAV"}, {"t": "T", "d": 360}, {"t": "F", "n": "KENED", "alt": "3000"}, {"t": "T", "d": 360}, {"t": "F", "n": "WELSH", "alt": "1000"}, {"t": "T", "d": 36}, {"t": "F", "n": "PROBE", "alt": "1000"}, {"t": "T", "d": 51}, {"t": "F", "n": "JOOPY", "alt": "1000"}]}, {"name": "DINER", "code": "KENED2.DINER", "legs": [{"t": "F", "n": "KUNAV"}, {"t": "T", "d": 360}, {"t": "F", "n": "KENED", "alt": "3000"}, {"t": "T", "d": 55}, {"t": "F", "n": "INDEX", "alt": "1000"}, {"t": "T", "d": 49}, {"t": "F", "n": "NKITA", "alt": "1000"}, {"t": "F", "n": "DINER", "alt": "1200"}]}]}, {"name": "LOGAN 4 RNAV DEPARTURE", "code": "LOGAN4.LOGAN", "rwyProcs": [{"rwys": ["25L"], "legs": [{"t": "F", "n": "DOCKR", "alt": "at or above 1000"}, {"t": "T", "d": 261}, {"t": "F", "n": "QURAN", "alt": "at or above 2000"}, {"t": "T", "d": 291}, {"t": "F", "n": "EXMOR"}, {"t": "T", "d": 349}, {"t": "F", "n": "LOGAN", "alt": "at or above 3000"}]}, {"rwys": ["25C", "25R"], "legs": [{"t": "F", "n": "DLREY", "alt": "at or above 1000"}, {"t": "T", "d": 271}, {"t": "F", "n": "DAALE"}, {"t": "T", "d": 301}, {"t": "F", "n": "LOGAN", "alt": "at or above 3000"}]}], "transitions": [{"name": "RENDR", "code": "LOGAN4.RENDR", "legs": [{"t": "T", "d": 8}, {"t": "T", "d": 358}, {"t": "F", "n": "BUCFA", "alt": "1800"}, {"t": "T", "d": 33}, {"t": "F", "n": "SKYDV", "alt": "1000"}, {"t": "F", "n": "WELSH"}, {"t": "T", "d": 360}, {"t": "F", "n": "RENDR", "alt": "1000"}]}, {"name": "DINER", "code": "LOGAN4.DINER", "legs": [{"t": "T", "d": 8}, {"t": "T", "d": 358}, {"t": "F", "n": "BUCFA", "alt": "1800"}, {"t": "T", "d": 33}, {"t": "F", "n": "SKYDV", "alt": "1000"}, {"t": "F", "n": "WELSH"}, {"t": "T", "d": 71}, {"t": "F", "n": "MDWAY", "alt": "1000"}, {"t": "F", "n": "DINER", "alt": "1200"}]}]}, {"name": "OSHNN 1 RNAV DEPARTURE", "code": "OSHNN1.OSHNN", "rwyProcs": [{"rwys": ["25L"], "legs": [{"t": "F", "n": "HIIPR", "alt": "at or above 1700"}, {"t": "T", "d": 210}, {"t": "F", "n": "SHAEF"}]}, {"rwys": ["25C"], "legs": [{"t": "F", "n": "FABRA", "alt": "at or above 1700"}, {"t": "T", "d": 205}, {"t": "F", "n": "SHAEF"}]}, {"rwys": ["25R"], "legs": [{"t": "F", "n": "FABRA", "alt": "at or above 1700"}, {"t": "T", "d": 205}, {"t": "F", "n": "SHAEF"}]}], "transitions": [{"name": "SILVA", "code": "OSHNN1.SILVA", "legs": [{"t": "T", "d": 160}, {"t": "F", "n": "PEVEE"}, {"t": "T", "d": 90}, {"t": "F", "n": "HOLTZ"}, {"t": "F", "n": "OSHNN", "alt": "at or above 3000"}, {"t": "T", "d": 18}, {"t": "F", "n": "CAHIL", "alt": "1800"}, {"t": "F", "n": "ZOOMM", "alt": "1500"}, {"t": "T", "d": 31}, {"t": "F", "n": "SEBBY", "alt": "1000"}, {"t": "F", "n": "ATPEV", "alt": "1000"}, {"t": "F", "n": "ARCUS", "alt": "1000"}, {"t": "F", "n": "OCEEN", "alt": "1000"}, {"t": "T", "d": 59}, {"t": "F", "n": "SILVA", "alt": "1000"}]}, {"name": "CYRIL", "code": "OSHNN1.CYRIL", "legs": [{"t": "T", "d": 160}, {"t": "F", "n": "PEVEE"}, {"t": "T", "d": 90}, {"t": "F", "n": "HOLTZ"}, {"t": "F", "n": "OSHNN", "alt": "at or above 3000"}, {"t": "T", "d": 18}, {"t": "F", "n": "CAHIL", "alt": "1800"}, {"t": "F", "n": "ZOOMM", "alt": "1500"}, {"t": "T", "d": 31}, {"t": "F", "n": "SEBBY", "alt": "1000"}, {"t": "F", "n": "ATPEV", "alt": "1000"}, {"t": "F", "n": "ARCUS", "alt": "1000"}, {"t": "F", "n": "OCEEN", "alt": "1000"}, {"t": "T", "d": 59}, {"t": "F", "n": "SILVA", "alt": "1000"}, {"t": "T", "d": 76}, {"t": "F", "n": "GOOSE", "alt": "1000"}, {"t": "F", "n": "CYRIL", "alt": "1000"}]}, {"name": "GRASS", "code": "OSHNN1.GRASS", "legs": [{"t": "T", "d": 160}, {"t": "F", "n": "PEVEE"}, {"t": "T", "d": 90}, {"t": "F", "n": "HOLTZ"}, {"t": "F", "n": "OSHNN", "alt": "at or above 3000"}, {"t": "T", "d": 18}, {"t": "F", "n": "CAHIL", "alt": "1800"}, {"t": "F", "n": "ZOOMM", "alt": "1500"}, {"t": "T", "d": 75}, {"t": "F", "n": "JAMSI", "alt": "1000"}, {"t": "T", "d": 107}, {"t": "F", "n": "PMPKN", "alt": "1000"}, {"t": "F", "n": "GRASS", "alt": "1000"}]}]}, {"name": "TRAINING 1 RNAV DEPARTURE", "code": "TRN1.TRN", "rwyProcs": [{"rwys": ["25L"], "legs": [{"t": "F", "n": "DOCKR", "alt": "at or above 1000"}, {"t": "T", "d": 170}, {"t": "F", "n": "WEILR"}, {"t": "T", "d": 105}, {"t": "F", "n": "TRN VOR"}, {"t": "F", "n": "TRN VOR"}]}, {"rwys": ["25C", "25R"], "legs": [{"t": "F", "n": "DLREY", "alt": "at or above 1000"}, {"t": "T", "d": 200}, {"t": "F", "n": "PEPUL"}, {"t": "T", "d": 158}, {"t": "F", "n": "HAYNK"}, {"t": "T", "d": 75}, {"t": "F", "n": "TRN VOR"}, {"t": "F", "n": "TRN VOR"}]}], "transitions": [{"name": "SILVA", "code": "TRN1.SILVA", "legs": [{"t": "T", "d": 30}, {"t": "F", "n": "MDWST", "alt": "1000"}, {"t": "F", "n": "ATPEV", "alt": "1000"}, {"t": "F", "n": "OCEEN", "alt": "1000"}, {"t": "T", "d": 60}, {"t": "F", "n": "SILVA", "alt": "1000"}]}, {"name": "CYRIL", "code": "TRN1.CYRIL", "legs": [{"t": "T", "d": 30}, {"t": "F", "n": "MDWST", "alt": "1000"}, {"t": "F", "n": "ATPEV", "alt": "1000"}, {"t": "F", "n": "OCEEN", "alt": "1000"}, {"t": "T", "d": 60}, {"t": "F", "n": "SILVA", "alt": "1000"}, {"t": "T", "d": 75}, {"t": "F", "n": "CYRIL", "alt": "1000"}]}, {"name": "GRASS", "code": "TRN1.GRASS", "legs": [{"t": "T", "d": 68}, {"t": "F", "n": "GODLU", "alt": "1000"}, {"t": "T", "d": 50}, {"t": "F", "n": "JAMSI", "alt": "1000"}, {"t": "T", "d": 110}, {"t": "F", "n": "GRASS", "alt": "1000"}]}]}, {"name": "WNNDY 3 RNAV DEPARTURE", "code": "WNNDY3.WNNDY", "rwyProcs": [{"rwys": ["ALL"], "legs": [{"t": "F", "n": "MJSTY", "alt": "at or above 1000"}, {"t": "T", "d": 45}, {"t": "F", "n": "WNNDY", "alt": "1000"}]}], "transitions": [{"name": "NARXX", "code": "WNNDY3.NARXX", "legs": [{"t": "T", "d": 360}, {"t": "F", "n": "GREEK", "alt": "1000"}, {"t": "T", "d": 20}, {"t": "F", "n": "NARXX", "alt": "1000"}]}, {"name": "SILVA", "code": "WNNDY3.SILVA", "legs": [{"t": "F", "n": "OCEEN", "alt": "1000"}, {"t": "T", "d": 56}, {"t": "F", "n": "SILVA", "alt": "1000"}]}]}], "ITKO": [{"name": "ASTRO 1 RNAV DEPARTURE", "code": "ASTRO1.ASTRO", "rwyProcs": [{"rwys": ["02"], "legs": [{"t": "T", "d": 20}]}, {"rwys": ["31"], "legs": [{"t": "T", "d": 310}, {"t": "T", "d": 180}]}], "transitions": [{"name": "BLANK", "code": "ASTRO1.BLANK", "legs": [{"t": "T", "d": 240}, {"t": "F", "n": "GULEG", "alt": "2000"}, {"t": "T", "d": 210}, {"t": "F", "n": "BLANK", "alt": "2000"}]}, {"name": "PROBE", "code": "ASTRO1.PROBE", "legs": [{"t": "T", "d": 160}, {"t": "F", "n": "PIPER", "alt": "2000"}, {"t": "T", "d": 165}, {"t": "F", "n": "PROBE", "alt": "2000"}]}, {"name": "ONDER", "code": "ASTRO1.ONDER", "legs": [{"t": "T", "d": 160}, {"t": "F", "n": "PIPER", "alt": "2000"}, {"t": "T", "d": 100}, {"t": "F", "n": "ONDER", "alt": "2000"}]}, {"name": "DINER", "code": "ASTRO1.DINER", "legs": [{"t": "T", "d": 160}, {"t": "F", "n": "PIPER", "alt": "2000"}, {"t": "T", "d": 100}, {"t": "F", "n": "ONDER", "alt": "2000"}, {"t": "T", "d": 145}, {"t": "F", "n": "DINER", "alt": "2000"}]}]}, {"name": "HONDA 1 RNAV DEPARTURE", "code": "HONDA1.HONDA", "rwyProcs": [{"rwys": ["02"], "legs": [{"t": "T", "d": 20}, {"t": "T", "d": 60}, {"t": "F", "n": "LETSE"}, {"t": "T", "d": 110}, {"t": "F", "n": "HONDA", "alt": "2000 (hard altitude)"}]}, {"rwys": ["20"], "legs": [{"t": "T", "d": 200}, {"t": "T", "d": 65}, {"t": "F", "n": "HONDA", "alt": "2000 (hard altitude)"}]}], "transitions": []}, {"name": "LETSE 1 RNAV DEPARTURE", "code": "LETSE1.KNIFE", "rwyProcs": [{"rwys": ["ALL"], "legs": [{"t": "T", "d": 20}, {"t": "T", "d": 60}, {"t": "F", "n": "LETSE"}, {"t": "T", "d": 110}, {"t": "F", "n": "HONDA", "alt": "2000"}, {"t": "T", "d": 180}, {"t": "F", "n": "KNIFE", "alt": "2000 (hard altitude)"}]}], "transitions": [{"name": "RENDR", "code": "LETSE1.RENDR", "legs": [{"t": "T", "d": 260}, {"t": "F", "n": "ONDER", "alt": "2000"}, {"t": "T", "d": 260}, {"t": "F", "n": "RENDR", "alt": "2000"}]}, {"name": "PROBE", "code": "LETSE1.PROBE", "legs": [{"t": "T", "d": 260}, {"t": "F", "n": "ONDER", "alt": "2000"}, {"t": "T", "d": 230}, {"t": "F", "n": "PROBE", "alt": "2000"}]}, {"name": "DINER", "code": "LETSE1.DINER", "legs": [{"t": "T", "d": 185}, {"t": "F", "n": "DINER", "alt": "2000"}]}]}, {"name": "ONDER 1 RNAV DEPARTURE", "code": "ONDER1.ONDER", "rwyProcs": [{"rwys": ["13"], "legs": [{"t": "T", "d": 130}, {"t": "T", "d": 175}]}, {"rwys": ["20"], "legs": [{"t": "T", "d": 200}, {"t": "T", "d": 145}]}], "transitions": [{"name": "PROBE", "code": "ONDER1.PROBE", "legs": [{"t": "T", "d": 225}, {"t": "F", "n": "PROBE", "alt": "2000"}]}, {"name": "DINER", "code": "ONDER1.DINER", "legs": [{"t": "T", "d": 145}, {"t": "F", "n": "DINER", "alt": "2000"}]}]}]}, "stars": {"IRFD": [{"name": "BEANS 1 RNAV ARRIVAL", "code": "BEANS.BEANS1", "entryTransitions": [{"name": "SPACE", "code": "SPACE.BEANS1", "legs": [{"t": "F", "n": "SPACE"}, {"t": "T", "d": 120}, {"t": "F", "n": "BEANS", "alt": "1000"}]}, {"name": "SEEKS", "code": "SEEKS.BEANS1", "legs": [{"t": "F", "n": "SEEKS"}, {"t": "T", "d": 54}, {"t": "F", "n": "BEANS", "alt": "1000"}]}], "rwyProcs": [{"rwys": ["07L", "07C", "07R"], "legs": [{"t": "T", "d": 103}, {"t": "F", "n": "LOGAN"}]}, {"rwys": ["25L", "25C", "25R"], "legs": [{"t": "T", "d": 68}, {"t": "F", "n": "BRDGE"}, {"t": "T", "d": 68}, {"t": "F", "n": "ICTAM"}, {"t": "T", "d": 80}, {"t": "F", "n": "HAWFA", "alt": "at or above 2000"}, {"t": "T", "d": 80}]}]}, {"name": "JAMSI 1 RNAV ARRIVAL", "code": "JAMSI.JAMSI1", "entryTransitions": [{"name": "ANYMS", "code": "ANYMS.JAMSI1", "legs": [{"t": "F", "n": "ANYMS"}, {"t": "T", "d": 239}, {"t": "H", "n": "JAMSI"}, {"t": "F", "n": "JAMSI", "alt": "1500"}]}, {"name": "GRASS", "code": "GRASS.JAMSI1", "legs": [{"t": "F", "n": "GRASS"}, {"t": "T", "d": 290}, {"t": "T", "d": 110}, {"t": "H", "n": "JAMSI"}, {"t": "F", "n": "JAMSI", "alt": "1500"}]}], "rwyProcs": [{"rwys": ["07L", "07C", "07R"], "legs": [{"t": "T", "d": 228}, {"t": "F", "n": "GODLU"}, {"t": "T", "d": 262}, {"t": "F", "n": "PEPUL", "alt": "1300 (hard altitude, not 'at or above')"}]}, {"rwys": ["25L", "25C", "25R"], "legs": [{"t": "T", "d": 347}]}]}, {"name": "POPPY 3 RNAV ARRIVAL", "code": "SETHR.POPPY3", "entryTransitions": [{"name": "NARXX", "code": "NARXX.POPPY3", "legs": [{"t": "F", "n": "NARXX"}, {"t": "T", "d": 223}, {"t": "F", "n": "GAVIN", "alt": "1000"}, {"t": "T", "d": 208}, {"t": "H", "n": "SETHR"}, {"t": "F", "n": "SETHR"}]}, {"name": "CYRIL", "code": "CYRIL.POPPY3", "legs": [{"t": "F", "n": "CYRIL"}, {"t": "T", "d": 261}, {"t": "F", "n": "SILVA", "alt": "1000"}, {"t": "T", "d": 240}, {"t": "F", "n": "OCEEN", "alt": "1000"}, {"t": "T", "d": 255}, {"t": "H", "n": "SETHR"}, {"t": "F", "n": "SETHR"}]}, {"name": "CAWZE", "code": "CAWZE.POPPY3", "legs": [{"t": "F", "n": "CAWZE"}, {"t": "T", "d": 287}, {"t": "F", "n": "OCEEN", "alt": "1000"}, {"t": "T", "d": 255}, {"t": "H", "n": "SETHR"}, {"t": "F", "n": "SETHR"}]}], "rwyProcs": [{"rwys": ["07L", "07C", "07R"], "legs": [{"t": "T", "d": 180}, {"t": "F", "n": "POPPY", "alt": "at or above 1200"}, {"t": "T", "d": 270}]}, {"rwys": ["25L", "25C", "25R"], "legs": [{"t": "T", "d": 180}, {"t": "F", "n": "POPPY", "alt": "at or above 1200"}, {"t": "T", "d": 157}]}]}, {"name": "KUNAV 2 RNAV ARRIVAL", "code": "KENED.KUNAV1", "entryTransitions": [{"name": "RENDR", "code": "RENDR.KUNAV1", "legs": [{"t": "F", "n": "RENDR"}, {"t": "T", "d": 180}, {"t": "F", "n": "WELSH"}, {"t": "H", "n": "KENED"}, {"t": "F", "n": "KENED"}, {"t": "F", "n": "KUNAV", "alt": "2000"}]}, {"name": "DINER", "code": "DINER.KUNAV1", "legs": [{"t": "F", "n": "DINER"}, {"t": "T", "d": 210}, {"t": "F", "n": "SURGE", "alt": "1000"}, {"t": "T", "d": 243}, {"t": "F", "n": "INDEX"}, {"t": "T", "d": 235}, {"t": "F", "n": "KENED"}, {"t": "F", "n": "KUNAV", "alt": "2000"}]}], "rwyProcs": [{"rwys": ["07L", "07C", "07R"], "legs": [{"t": "T", "d": 230}, {"t": "F", "n": "BRIDGE"}, {"t": "T", "d": 190}, {"t": "F", "n": "ALISO"}, {"t": "T", "d": 115}]}, {"rwys": ["25L", "25C", "25R"], "legs": [{"t": "T", "d": 120}, {"t": "F", "n": "HAWFA"}, {"t": "T", "d": 130}, {"t": "F", "n": "SWEET", "alt": "1500"}, {"t": "T", "d": 70}]}]}, {"name": "SUNST 3 RNAV ARRIVAL", "code": "SUNST.SUNST3", "entryTransitions": [], "rwyProcs": [{"rwys": ["07L", "07C", "07R"], "legs": [{"t": "F", "n": "SUNST"}, {"t": "T", "d": 160}, {"t": "F", "n": "LAAMP", "alt": "1000"}, {"t": "T", "d": 160}, {"t": "F", "n": "LOGAN", "alt": "1000"}]}, {"rwys": ["25L", "25C", "25R"], "legs": [{"t": "F", "n": "SUNST"}, {"t": "T", "d": 120}, {"t": "F", "n": "BUCFA", "alt": "2000 (hard altitude)"}, {"t": "T", "d": 103}, {"t": "F", "n": "HAWFA", "alt": "1000"}, {"t": "T", "d": 103}, {"t": "F", "n": "SWEET", "alt": "at or below 1500"}, {"t": "T", "d": 67}]}]}, {"name": "GORDO 1 ARRIVAL", "code": "GORDO.GORDO1", "entryTransitions": [], "rwyProcs": [{"rwys": ["07L", "07C"], "legs": [{"t": "F", "n": "SKP"}, {"t": "F", "n": "MOSSY"}, {"t": "T", "d": 247}, {"t": "F", "n": "GORDO"}, {"t": "F", "n": "GODLU"}, {"t": "F", "n": "TRN"}]}]}], "ITKO": [{"name": "GULEG 1 RNAV ARRIVAL", "code": "GULEG.GULEG1", "entryTransitions": [{"name": "BLANK", "code": "BLANK.GULEG1", "legs": [{"t": "F", "n": "BLANK"}, {"t": "T", "d": 30}, {"t": "F", "n": "GULEG", "alt": "2000"}]}, {"name": "EURAD", "code": "EURAD.GULEG1", "legs": [{"t": "F", "n": "EURAD"}, {"t": "T", "d": 80}, {"t": "F", "n": "GULEG", "alt": "2000"}]}], "rwyProcs": [{"rwys": ["13"], "legs": [{"t": "T", "d": 15}, {"t": "F", "n": "SHIBA"}]}, {"rwys": ["20", "31"], "legs": [{"t": "T", "d": 95}, {"t": "F", "n": "PIPER"}, {"t": "T", "d": 100}, {"t": "F", "n": "ONDER"}, {"t": "T", "d": 15}]}]}, {"name": "ISLAND 2 RNAV ARRIVAL", "code": "HONDA.ISLND1", "entryTransitions": [], "rwyProcs": [{"rwys": ["13"], "legs": [{"t": "T", "d": 260}, {"t": "F", "n": "ONDER", "alt": "2000"}, {"t": "T", "d": 280}, {"t": "F", "n": "PIPER"}, {"t": "T", "d": 340}, {"t": "F", "n": "ASTRO"}]}, {"rwys": ["20"], "legs": [{"t": "T", "d": 340}]}]}, {"name": "KNIFE 2 RNAV ARRIVAL", "code": "ONDER.KNIFE1", "entryTransitions": [{"name": "PROBE", "code": "PROBE.KNIFE1", "legs": [{"t": "F", "n": "PROBE"}, {"t": "T", "d": 45}, {"t": "F", "n": "ONDER", "alt": "2000"}]}, {"name": "DINER", "code": "DINER.KNIFE1", "legs": [{"t": "F", "n": "DINER"}, {"t": "T", "d": 325}, {"t": "F", "n": "ONDER", "alt": "2000"}]}], "rwyProcs": [{"rwys": ["20"], "legs": [{"t": "T", "d": 80}, {"t": "F", "n": "KNIFE"}, {"t": "T", "d": 360}]}]}, {"name": "PIPER 1 RNAV ARRIVAL", "code": "PIPER.PIPER1", "entryTransitions": [{"name": "RENDR", "code": "RENDR.PIPER1", "legs": [{"t": "F", "n": "RENDR"}, {"t": "T", "d": 45}, {"t": "F", "n": "PIPER", "alt": "2000"}]}, {"name": "DINER", "code": "DINER.PIPER1", "legs": [{"t": "F", "n": "DINER"}, {"t": "T", "d": 325}, {"t": "F", "n": "ONDER"}, {"t": "T", "d": 280}, {"t": "F", "n": "PIPER", "alt": "2000"}]}], "rwyProcs": [{"rwys": ["13"], "legs": [{"t": "T", "d": 340}, {"t": "F", "n": "ASTRO"}]}]}]}, "waypoints": ["ABSRS", "ACRES", "ALDER", "ALTRS", "ANYMS", "AQWRT", "ASTRO", "ATPEV", "BEANS", "BILLO", "BLANK", "BOBOS", "BOBUX", "BUCFA", "BULLY", "CAMEL", "CAWZE", "CELAR", "CHAIN", "CHILY", "CRAZY", "CYRIL", "DEATH", "DEBUG", "DINER", "DOGGO", "DUNKS", "EMJAY", "ENDER", "EXMOR", "EZYDB", "FORCE", "FORIA", "FROOT", "GAVIN", "GODLU", "GRASS", "GULEG", "HACKE", "HAWFA", "HOGGS", "HONDA", "ICTAM", "INDEX", "JACKI", "JAMSI", "JAZZR", "JUSTY", "KELLA", "KENED", "KNIFE", "KUNAV", "LAVNO", "LAZER", "LETSE", "LLIME", "LOGAN", "MASEV", "MOGTA", "MORRD", "MUONE", "NIKON", "NOONU", "NUBER", "OCEEN", "ODOKU", "ONDER", "PACKT", "PEPUL", "PIPER", "PROBE", "REAPR", "RENTS", "ROBUX", "ROSMO", "SAWPE", "SEEKS", "SETHR", "SHELL", "SHIBA", "SHREK", "SILVA", "SISTA", "SPACE", "SQUID", "STACK", "STRAX", "SUNST", "TALIS", "THACC", "THENR", "TINDR", "TRELN", "UDMUG", "UWAIS", "WAGON", "WASTE", "WELLS", "WELSH", "WOTAN", "YOUTH", "ZESTA"], "navaids": [{"name": "GRINDAVIK", "ident": "GVK", "freq": "112.320", "type": "VOR"}, {"name": "MELLOR", "ident": "MLR", "freq": "114.75", "type": "VOR"}, {"name": "GARRY", "ident": "GRY", "freq": "111.90", "type": "VOR"}, {"name": "SAUTHEMPTONA", "ident": "SAU", "freq": "115.35", "type": "VOR"}, {"name": "ROCKFORD", "ident": "RFD", "freq": "113.55", "type": "VOR"}, {"name": "BLADES", "ident": "BLA", "freq": "117.45", "type": "VOR"}, {"name": "TRAINING CENTRE", "ident": "TRN", "freq": "113.10", "type": "VOR"}, {"name": "LARNACA", "ident": "LCK", "freq": "112.80", "type": "VOR"}, {"name": "PAPHOS", "ident": "PFO", "freq": "117.90", "type": "VOR"}, {"name": "IZOLIRANI", "ident": "IZO", "freq": "117.530", "type": "VOR"}, {"name": "PERTH", "ident": "PER", "freq": "115.430", "type": "VOR"}, {"name": "NAJAF", "ident": "NJF", "freq": "112.45", "type": "VOR"}, {"name": "HANEDA", "ident": "HME", "freq": "112.20", "type": "VOR"}, {"name": "HAWKIN", "ident": "HAW", "type": "NDB"}, {"name": "GOLDEN", "ident": "GOL", "type": "NDB"}, {"name": "CROIS NOOB", "ident": "COC", "type": "NDB"}, {"name": "BRAINSTORM", "ident": "BTM", "type": "NDB"}, {"name": "ORANGE", "ident": "ORG", "type": "NDB"}, {"name": "HOTDOG", "ident": "HOT", "type": "NDB"}, {"name": "RESURGE", "ident": "RES", "type": "NDB"}, {"name": "ROMENS", "ident": "ROM", "type": "NDB"}, {"name": "DELIVERY", "ident": "DEL", "type": "NDB"}, {"name": "CLEARANCE", "ident": "CLR", "type": "NDB"}, {"name": "DETOX", "ident": "DET", "type": "NDB"}, {"name": "KINDLE", "ident": "KIN", "type": "NDB"}, {"name": "CANDLE", "ident": "CAN", "type": "NDB"}, {"name": "HUNTER", "ident": "HUT", "type": "NDB"}, {"name": "DIRECTOR", "ident": "DIR", "type": "NDB"}, {"name": "KROTEN", "ident": "KRT", "type": "NDB"}, {"name": "TRESIN", "ident": "TRE", "type": "NDB"}, {"name": "DIZZIER", "ident": "DIZ", "type": "NDB"}, {"name": "Skopelos", "ident": "SKP", "freq": "113.4", "type": "VOR"}], "airports": [{"icao": "ITKO", "name": "Haneda"}, {"icao": "IPPH", "name": "Perth"}, {"icao": "ILKL", "name": ""}, {"icao": "ISCM", "name": "Hotdog Fld"}, {"icao": "IJAF", "name": "Najaf"}, {"icao": "IZOL", "name": "Izolirani"}, {"icao": "IGRV", "name": "Grindavik Island"}, {"icao": "IMLR", "name": "Mellor Intl"}, {"icao": "IRFD", "name": "New Rockford Intl"}, {"icao": "ISAU", "name": "Sauthemptona Regl"}, {"icao": "IBLT", "name": "Boltic Airfield"}, {"icao": "IBTH", "name": "Saint Barthelemy"}, {"icao": "ITRC", "name": "Rockford Training Center"}, {"icao": "ISKP", "name": "Skopelos Airfield"}, {"icao": "ILAR", "name": "Larnaca Intl"}, {"icao": "IPAP", "name": "Paphos Intl"}, {"icao": "IBAR", "name": ""}, {"icao": "IIAB", "name": ""}, {"icao": "IHEN", "name": ""}, {"icao": "IBTH", "name": "Saint Barthelemy"}, {"icao": "IBLT", "name": "Boltic Airfield"}, {"icao": "IGAR", "name": "Garry AFB"}], "runwaysByAirport": {"IRFD": ["07L", "07C", "07R", "25L", "25C", "25R"], "ITKO": ["02", "13", "20", "31"]}};
+import RFD_DATA from "./data/index.js";
 
 // ---------- helpers ----------
 
@@ -157,7 +162,26 @@ const PHASE_COLOR = {
   ARR: "var(--text-dim)",
 };
 
-// ---------- small UI atoms ----------
+// ---------- schematic 2D layout ----------
+// We don't have real stud coordinates, and most legs only give a heading (no
+// distance), so this lays fixes out at the CORRECT relative angle from each
+// other using a fixed arbitrary leg length. It's schematic, not to scale -
+// same spirit as the source charts themselves (one of which literally says
+// "NOT TO SCALE"). Legs with no known heading (freely-chosen enroute fixes)
+// just continue the previous heading in a straight line.
+const SEGMENT_LEN = 46;
+function computeSchematicPositions(nodes) {
+  let x = 0, y = 0, lastHeading = 0;
+  return nodes.map((n, i) => {
+    if (i === 0) return { ...n, x: 0, y: 0 };
+    const heading = n.trackIn != null ? n.trackIn : lastHeading;
+    lastHeading = heading;
+    const rad = (heading * Math.PI) / 180;
+    x += Math.sin(rad) * SEGMENT_LEN;
+    y -= Math.cos(rad) * SEGMENT_LEN;
+    return { ...n, x, y };
+  });
+}
 
 function Select({ value, onChange, options, placeholder, disabled }) {
   return (
@@ -242,90 +266,155 @@ function Field({ label, children }) {
   );
 }
 
-// ---------- route tape (signature visual) ----------
+// ---------- sidebar shell ----------
 
-function RouteTape({ nodes, currentIdx }) {
-  const scrollRef = useRef(null);
-  useEffect(() => {
-    if (!scrollRef.current) return;
-    const el = scrollRef.current.querySelector(`[data-idx="${currentIdx}"]`);
-    if (el) el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  }, [currentIdx]);
+const NAV_SECTIONS = [
+  { id: "flightplan", label: "Flight Plan", icon: Route, active: true },
+  { id: "routes", label: "Routes", icon: Waypoints, active: false },
+  { id: "airports", label: "Airports", icon: MapPin, active: false },
+  { id: "sidstar", label: "SID / STAR", icon: Signpost, active: false },
+  { id: "approach", label: "Approach", icon: Navigation2, active: false },
+  { id: "airspace", label: "Airspace", icon: Layers, active: false },
+  { id: "map", label: "Map", icon: MapIcon, active: false },
+  { id: "weather", label: "Weather", icon: CloudSun, active: false },
+  { id: "performance", label: "Performance", icon: Gauge, active: false },
+  { id: "fuel", label: "Fuel", icon: Fuel, active: false },
+  { id: "documents", label: "Documents", icon: FileText, active: false },
+];
 
-  if (!nodes.length) {
-    return <div className="gw-tape-empty">Build a route to see the progress tape.</div>;
-  }
-
+function Sidebar({ section, setSection }) {
   return (
-    <div className="gw-tape" ref={scrollRef}>
-      <div className="gw-tape-track">
-        {nodes.map((n, i) => {
-          const isPast = i < currentIdx;
-          const isCurrent = i === currentIdx;
-          const segColor = PHASE_COLOR[n.phase] || "var(--text-dim)";
+    <aside className="gw-sidebar">
+      <div className="gw-sidebar-brand">
+        <Navigation2 size={20} strokeWidth={2.4} className="gw-brand-mark" />
+        <span className="gw-brand-word">GATEWAY</span>
+      </div>
+      <nav className="gw-sidebar-nav">
+        {NAV_SECTIONS.map((item) => {
+          const Icon = item.icon;
+          const isActive = section === item.id;
           return (
-            <React.Fragment key={i}>
-              {i > 0 && (
-                <div
-                  className="gw-tape-line"
-                  style={{
-                    background: isCurrent
-                      ? "var(--magenta)"
-                      : isPast
-                      ? "var(--green)"
-                      : segColor,
-                    opacity: isPast || isCurrent ? 1 : 0.45,
-                  }}
-                />
-              )}
-              <div className="gw-tape-node-wrap" data-idx={i}>
-                {isCurrent && (
-                  <div className="gw-tape-plane">
-                    <Plane size={16} style={{ transform: "rotate(90deg)" }} />
-                  </div>
-                )}
-                <div
-                  className={
-                    "gw-tape-node" +
-                    (n.isAirport ? " gw-tape-node-apt" : "") +
-                    (n.hold ? " gw-tape-node-hold" : "")
-                  }
-                  style={{
-                    borderColor: isPast ? "var(--green)" : isCurrent ? "var(--magenta)" : segColor,
-                    background: isPast ? "var(--green-dim)" : isCurrent ? "var(--magenta-dim)" : "var(--panel-2)",
-                  }}
-                  title={n.alt || ""}
-                >
-                  {n.isAirport ? n.name : n.name.slice(0, 5)}
-                </div>
-                <div className="gw-tape-alt">{n.alt || ""}</div>
-                {n.trackIn != null && <div className="gw-tape-track-label">{String(n.trackIn).padStart(3, "0")}°</div>}
-              </div>
-            </React.Fragment>
+            <button
+              key={item.id}
+              className={"gw-navitem" + (isActive ? " active" : "") + (!item.active ? " dimmed" : "")}
+              onClick={() => setSection(item.id)}
+            >
+              <Icon size={16} strokeWidth={2} />
+              <span>{item.label}</span>
+            </button>
           );
         })}
+      </nav>
+      <div className="gw-sidebar-status">
+        <div className="gw-status-title">MVP DATA</div>
+        <div className="gw-status-row"><span className="gw-status-dot live" />Rockford · Tokyo · Perth</div>
+        <div className="gw-status-sub">12 SIDs · 12 STARs digitized</div>
+      </div>
+      <button
+        className={"gw-navitem gw-settings-btn" + (section === "settings" ? " active" : "")}
+        onClick={() => setSection("settings")}
+      >
+        <SettingsIcon size={16} strokeWidth={2} />
+        <span>Settings</span>
+      </button>
+    </aside>
+  );
+}
+
+function TopBar() {
+  return (
+    <header className="gw-topbar">
+      <div className="gw-topbar-spacer" />
+      <div className="gw-topbar-right">
+        <span className="gw-network-pill">PTFS ATC24 <ChevronDown size={13} /></span>
+        <button className="gw-iconbtn-ghost" title="Toggle theme (dark only, for now)"><Moon size={15} /></button>
+        <button className="gw-iconbtn-ghost" title="Account"><User size={15} /></button>
+      </div>
+    </header>
+  );
+}
+
+function PlaceholderPage({ label, icon: Icon, blurb }) {
+  return (
+    <div className="gw-placeholder">
+      <div className="gw-placeholder-icon"><Icon size={26} strokeWidth={1.6} /></div>
+      <div className="gw-placeholder-title">{label}</div>
+      <div className="gw-placeholder-blurb">{blurb}</div>
+      <div className="gw-placeholder-tag">Not built yet</div>
+    </div>
+  );
+}
+
+const PLACEHOLDER_BLURBS = {
+  routes: "Save and reuse your own flight plans across sessions. Right now, use Save on the Flight Plan page - a dedicated library view is next.",
+  airports: "Browse every airport in ATC24 with its runways, navaids, and which procedures are published. Rockford, Tokyo, and Perth already have full data behind the scenes.",
+  sidstar: "A searchable library of every digitized SID and STAR, independent of building a specific route. Pick departure/arrival on Flight Plan for now.",
+  approach: "Approach plates haven't been digitized yet - none have been uploaded so far.",
+  airspace: "Sector boundaries and controller positions, pulled live from 24data's /controllers endpoint.",
+  map: "A live traffic overview across all of ATC24, not tied to one flight plan. The Flight Plan page already has a route-specific map.",
+  weather: "Live ATIS per airport, pulled from 24data's /atis endpoint - the data exists, this view doesn't yet.",
+  performance: "Real aircraft performance numbers aren't available for ATC24's aircraft yet, so this stays empty rather than showing made-up figures.",
+  fuel: "Same as Performance - no real fuel burn data to show yet, so nothing here is invented.",
+  documents: "Chart images and reference documents per airport. We have some raw chart uploads from this session; not wired into the app as viewable assets yet.",
+};
+
+// ---------- route header ----------
+
+function RouteHeader({ adep, ades, adepName, adesName, onReverse, onClear, onSave, onShare, savedRoutes, onLoad }) {
+  const [showLoad, setShowLoad] = useState(false);
+  return (
+    <div className="gw-routeheader">
+      <div className="gw-routeheader-title">
+        <span>{adep || "????"}</span>
+        <ChevronRight size={22} strokeWidth={2.5} />
+        <span>{ades || "????"}</span>
+        <Star size={16} className="gw-routeheader-star" />
+      </div>
+      <div className="gw-routeheader-sub">
+        {adepName || "—"} <ChevronRight size={11} /> {adesName || "—"}
+      </div>
+      <div className="gw-routeheader-actions">
+        <button className="gw-btn-ghost" onClick={onReverse}><ArrowLeftRight size={13} /> Reverse</button>
+        <button className="gw-btn-ghost" onClick={onClear}><Trash2 size={13} /> Clear</button>
+        <div className="gw-savewrap">
+          <button className="gw-btn-outline" onClick={() => setShowLoad((s) => !s)}>
+            <FolderOpen size={13} /> Load <ChevronDown size={12} />
+          </button>
+          {showLoad && (
+            <div className="gw-loadmenu">
+              {savedRoutes.length === 0 && <div className="gw-loadmenu-empty">No saved routes yet</div>}
+              {savedRoutes.map((r) => (
+                <div key={r} className="gw-loadmenu-row" onClick={() => { onLoad(r); setShowLoad(false); }}>{r}</div>
+              ))}
+            </div>
+          )}
+        </div>
+        <button className="gw-btn-outline" onClick={onSave}><Save size={13} /> Save</button>
+        <button className="gw-btn-primary" onClick={onShare}><Share2 size={13} /> Share</button>
       </div>
     </div>
   );
 }
 
-function LegTable({ nodes, currentIdx }) {
+// ---------- waypoint table (honest columns - no fabricated distance/EET) ----------
+
+function WaypointTable({ nodes, currentIdx }) {
+  if (!nodes.length) {
+    return <div className="gw-table-empty">Configure a route below to see your waypoint sequence here.</div>;
+  }
   return (
-    <div className="gw-legtable">
-      <div className="gw-legtable-head">
-        <span>#</span><span>FIX</span><span>PHASE</span><span>TRACK</span><span>ALT</span>
+    <div className="gw-wptable">
+      <div className="gw-wptable-head">
+        <span>#</span><span>WAYPOINT</span><span>ALT</span><span>TRACK</span><span>PHASE</span>
       </div>
-      <div className="gw-legtable-body">
+      <div className="gw-wptable-body">
         {nodes.map((n, i) => (
-          <div
-            key={i}
-            className={"gw-legrow" + (i === currentIdx ? " gw-legrow-current" : i < currentIdx ? " gw-legrow-past" : "")}
-          >
-            <span className="gw-legrow-idx">{i + 1}</span>
-            <span className="gw-legrow-fix">{n.name}{n.hold ? " (HOLD)" : ""}</span>
-            <span className="gw-legrow-phase" style={{ color: PHASE_COLOR[n.phase] }}>{n.phase}</span>
-            <span className="gw-legrow-track">{n.trackIn != null ? String(n.trackIn).padStart(3, "0") + "°" : "—"}</span>
-            <span className="gw-legrow-alt">{n.alt || "—"}</span>
+          <div key={i} className={"gw-wprow" + (i === currentIdx ? " current" : i < currentIdx ? " past" : "")}>
+            <span className="gw-wprow-idx">{i + 1}</span>
+            <span className="gw-wprow-name">{n.name}{n.hold ? <span className="gw-holdtag">HOLD</span> : null}</span>
+            <span className="gw-wprow-alt">{n.alt || "—"}</span>
+            <span className="gw-wprow-track">{n.trackIn != null ? String(n.trackIn).padStart(3, "0") + "°" : "—"}</span>
+            <span className="gw-wprow-phase" style={{ color: PHASE_COLOR[n.phase] }}>{n.phase}</span>
           </div>
         ))}
       </div>
@@ -333,9 +422,331 @@ function LegTable({ nodes, currentIdx }) {
   );
 }
 
+// ---------- schematic map (signature element) ----------
+
+function SchematicMap({ nodes, currentIdx, showChartNote }) {
+  const [zoom, setZoom] = useState(1);
+  const [showAlt, setShowAlt] = useState(true);
+  const positioned = useMemo(() => computeSchematicPositions(nodes), [nodes]);
+
+  const bounds = useMemo(() => {
+    if (!positioned.length) return { minX: -100, maxX: 100, minY: -100, maxY: 100 };
+    const xs = positioned.map((p) => p.x), ys = positioned.map((p) => p.y);
+    return { minX: Math.min(...xs), maxX: Math.max(...xs), minY: Math.min(...ys), maxY: Math.max(...ys) };
+  }, [positioned]);
+
+  const pad = 60;
+  const rawW = Math.max(bounds.maxX - bounds.minX, 40) + pad * 2;
+  const rawH = Math.max(bounds.maxY - bounds.minY, 40) + pad * 2;
+  const cx = (bounds.minX + bounds.maxX) / 2;
+  const cy = (bounds.minY + bounds.maxY) / 2;
+  const vw = rawW / zoom, vh = rawH / zoom;
+  const viewBox = `${cx - vw / 2} ${cy - vh / 2} ${vw} ${vh}`;
+
+  const current = positioned[currentIdx];
+  const planeHeading = current && current.trackIn != null ? current.trackIn : 0;
+
+  return (
+    <div className="gw-map">
+      <div className="gw-map-toolbar">
+        <button className="gw-maptool" onClick={() => setShowAlt((s) => !s)}>
+          <Layers size={13} /> Layers
+        </button>
+        <div className="gw-map-toolbar-spacer" />
+        <button className="gw-mapzoom" onClick={() => setZoom((z) => Math.min(z * 1.4, 6))}><ZoomIn size={14} /></button>
+        <button className="gw-mapzoom" onClick={() => setZoom((z) => Math.max(z / 1.4, 0.4))}><ZoomOut size={14} /></button>
+        <button className="gw-mapzoom" onClick={() => setZoom(1)}><Maximize2 size={13} /></button>
+      </div>
+
+      {!positioned.length ? (
+        <div className="gw-map-empty">No route to show yet.</div>
+      ) : (
+        <svg viewBox={viewBox} className="gw-map-svg" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <pattern id="gwgrid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="var(--map-grid)" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect x={cx - vw} y={cy - vh} width={vw * 2} height={vh * 2} fill="url(#gwgrid)" />
+
+          {positioned.slice(1).map((n, i) => {
+            const prev = positioned[i];
+            const idx = i + 1;
+            const isPast = idx <= currentIdx;
+            const isCurrentSeg = idx === currentIdx;
+            const color = isCurrentSeg ? "var(--magenta)" : isPast ? "var(--green)" : PHASE_COLOR[n.phase];
+            return (
+              <line
+                key={"l" + i}
+                x1={prev.x} y1={prev.y} x2={n.x} y2={n.y}
+                stroke={color} strokeWidth={isCurrentSeg ? 3 : 2}
+                opacity={isPast || isCurrentSeg ? 1 : 0.55}
+                strokeDasharray={n.phase === "ENROUTE" ? "6 4" : undefined}
+              />
+            );
+          })}
+
+          {positioned.map((n, i) => {
+            const isPast = i < currentIdx;
+            const isCurrent = i === currentIdx;
+            const color = isPast ? "var(--green)" : isCurrent ? "var(--magenta)" : PHASE_COLOR[n.phase];
+            return (
+              <g key={i}>
+                <circle
+                  cx={n.x} cy={n.y} r={n.isAirport ? 6 : 4}
+                  fill={n.isAirport ? "var(--panel)" : color}
+                  stroke={color} strokeWidth={2}
+                />
+                <text x={n.x + 9} y={n.y - 8} className="gw-map-label">{n.name}</text>
+                {showAlt && n.alt && <text x={n.x + 9} y={n.y + 14} className="gw-map-alt">{n.alt}</text>}
+              </g>
+            );
+          })}
+
+          {current && (
+            <g transform={`translate(${current.x},${current.y}) rotate(${planeHeading})`}>
+              <path d="M 0 -11 L 7 9 L 0 5 L -7 9 Z" fill="var(--magenta)" stroke="var(--bg)" strokeWidth={1} />
+            </g>
+          )}
+        </svg>
+      )}
+
+      <div className="gw-map-caption">Schematic route view — angles are real, spacing is not to scale.</div>
+    </div>
+  );
+}
+
+// ---------- summary cards (only real data - no fabricated numbers) ----------
+
+function SummaryCards({ cfg, built, mode, simPlaying, liveStatus, liveAircraft, currentNode, nextNode }) {
+  const phaseCounts = useMemo(() => {
+    if (!built) return {};
+    const c = {};
+    built.nodes.forEach((n) => { c[n.phase] = (c[n.phase] || 0) + 1; });
+    return c;
+  }, [built]);
+
+  return (
+    <div className="gw-cards">
+      <div className="gw-card">
+        <div className="gw-card-title">FLIGHT INFO</div>
+        <div className="gw-card-row"><span>Departure</span><span>{cfg.adep}{cfg.adepRwy ? ` / ${cfg.adepRwy}` : ""}</span></div>
+        <div className="gw-card-row"><span>Arrival</span><span>{cfg.ades}{cfg.adesRwy ? ` / ${cfg.adesRwy}` : ""}</span></div>
+        <div className="gw-card-row"><span>SID</span><span>{cfg.sidName || "—"}</span></div>
+        <div className="gw-card-row"><span>STAR</span><span>{cfg.starName || "—"}</span></div>
+      </div>
+
+      <div className="gw-card">
+        <div className="gw-card-title">ROUTE SUMMARY</div>
+        <div className="gw-card-row"><span>Total waypoints</span><span>{built ? built.nodes.length : "—"}</span></div>
+        <div className="gw-card-row"><span>SID legs</span><span>{phaseCounts.SID || 0}</span></div>
+        <div className="gw-card-row"><span>Enroute fixes</span><span>{phaseCounts.ENROUTE || 0}</span></div>
+        <div className="gw-card-row"><span>STAR legs</span><span>{phaseCounts.STAR || 0}</span></div>
+        <div className="gw-card-footnote">Distance/EET not shown — the charts don't give real leg distances yet.</div>
+      </div>
+
+      <div className="gw-card">
+        <div className="gw-card-title">PROGRESS</div>
+        <div className="gw-card-row"><span>Mode</span><span>{mode === "live" ? "LIVE" : "SIMULATE"}{mode === "sim" && simPlaying ? " · playing" : ""}</span></div>
+        <div className="gw-card-row"><span>At</span><span>{currentNode ? currentNode.name : "—"}</span></div>
+        <div className="gw-card-row"><span>Next</span><span>{nextNode ? nextNode.name : "—"}</span></div>
+        {mode === "live" && <div className="gw-card-row"><span>Link</span><span className={liveStatus === "live" ? "gw-live-ok" : ""}>{liveStatus.toUpperCase()}</span></div>}
+      </div>
+
+      <div className="gw-card">
+        <div className="gw-card-title">LIVE AIRCRAFT</div>
+        {mode === "live" && liveAircraft ? (
+          <>
+            <div className="gw-card-row"><span>Callsign</span><span>{liveAircraft.callsign || "—"}</span></div>
+            <div className="gw-card-row"><span>Heading</span><span>{liveAircraft.heading != null ? Math.round(liveAircraft.heading) + "°" : "—"}</span></div>
+            <div className="gw-card-row"><span>Altitude</span><span>{liveAircraft.altitude != null ? Math.round(liveAircraft.altitude) + " ft" : "—"}</span></div>
+            <div className="gw-card-row"><span>Ground spd</span><span>{liveAircraft.groundSpeed != null ? Math.round(liveAircraft.groundSpeed) + " kt" : "—"}</span></div>
+          </>
+        ) : (
+          <div className="gw-card-footnote">Connect in Settings and switch to LIVE to see your real aircraft here.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------- settings page ----------
+
+function SettingsPage({ robloxName, setRobloxName, backendUrl, setBackendUrl, liveStatus }) {
+  return (
+    <div className="gw-settings">
+      <div className="gw-panel-title">LIVE TRACKING</div>
+      <p className="gw-settings-blurb">
+        The browser can't reach 24data directly, so LIVE mode polls your own backend relay instead.
+        Run <code>gateway-backend/server.js</code> and point this at it.
+      </p>
+      <Field label="ROBLOX USERNAME">
+        <input className="gw-input" placeholder="Your Roblox username" value={robloxName} onChange={(e) => setRobloxName(e.target.value)} />
+      </Field>
+      <Field label="BACKEND URL">
+        <input className="gw-input" placeholder="http://localhost:8420" value={backendUrl} onChange={(e) => setBackendUrl(e.target.value)} />
+      </Field>
+      <div className="gw-settings-status">
+        Status: <span className={liveStatus === "live" ? "gw-live-ok" : ""}>{liveStatus.toUpperCase()}</span>
+      </div>
+    </div>
+  );
+}
+
+// ---------- flight plan page ----------
+
+function FlightPlanPage(props) {
+  const {
+    adep, setAdep, adepRwy, setAdepRwy, sidIdx, setSidIdx, sidTransIdx, setSidTransIdx,
+    enrouteFixes, setEnrouteFixes, ades, setAdes, adesRwy, setAdesRwy, starIdx, setStarIdx, starTransIdx, setStarTransIdx,
+    built, handleBuild, availableSids, availableStars,
+    mode, setMode, simPlaying, setSimPlaying, simIdx, setSimIdx, currentIdx, currentNode, nextNode,
+    liveStatus, liveAircraft,
+    onReverse, onClear, onSave, onShare, savedRoutes, onLoad,
+    cfgForCards,
+  } = props;
+
+  const [setupOpen, setSetupOpen] = useState(true);
+  const adepName = AIRPORTS.find((a) => a.icao === adep)?.name;
+  const adesName = AIRPORTS.find((a) => a.icao === ades)?.name;
+
+  return (
+    <>
+      <RouteHeader
+        adep={adep} ades={ades} adepName={adepName} adesName={adesName}
+        onReverse={onReverse} onClear={onClear} onSave={onSave} onShare={onShare}
+        savedRoutes={savedRoutes} onLoad={onLoad}
+      />
+
+      <div className="gw-tabs">
+        <span className="gw-tab active">FLIGHT PLAN</span>
+        <span className="gw-tab dimmed">PERFORMANCE</span>
+        <span className="gw-tab dimmed">NAV LOG</span>
+        <span className="gw-tab dimmed">DOCUMENTS</span>
+      </div>
+
+      <button className="gw-setup-toggle" onClick={() => setSetupOpen((s) => !s)}>
+        <ChevronsUpDown size={13} /> {setupOpen ? "Hide" : "Show"} route setup
+      </button>
+
+      {setupOpen && (
+        <div className="gw-panel gw-setup">
+          <div className="gw-setup-grid">
+            <Field label="DEPARTURE">
+              <Select value={adep} onChange={setAdep} options={AIRPORTS.map((a) => ({ value: a.icao, label: `${a.icao}${a.name ? " · " + a.name : ""}` }))} placeholder="Airport" />
+            </Field>
+            <Field label="RWY">
+              <Select value={adepRwy} onChange={setAdepRwy} options={runwaysFor(adep).map((r) => ({ value: r, label: r }))} placeholder="—" disabled={runwaysFor(adep).length === 0} />
+            </Field>
+            {RFD_DATA.sids[adep] ? (
+              <>
+                <Field label="SID">
+                  <Select
+                    value={sidIdx}
+                    onChange={(v) => { setSidIdx(v === null ? null : Number(v)); setSidTransIdx(null); }}
+                    options={availableSids.map((s) => ({ value: RFD_DATA.sids[adep].indexOf(s), label: s.name }))}
+                    placeholder="No SID (vectors)"
+                  />
+                </Field>
+                {sidIdx != null && RFD_DATA.sids[adep][sidIdx].transitions.length > 0 && (
+                  <Field label="SID TRANSITION">
+                    <Select
+                      value={sidTransIdx}
+                      onChange={(v) => setSidTransIdx(v === null ? null : Number(v))}
+                      options={RFD_DATA.sids[adep][sidIdx].transitions.map((t, i) => ({ value: i, label: t.name }))}
+                      placeholder="Select transition"
+                    />
+                  </Field>
+                )}
+              </>
+            ) : (
+              <div className="gw-note gw-span2">No published SID data for {adep} yet — direct routing only.</div>
+            )}
+
+            <Field label="ARRIVAL">
+              <Select value={ades} onChange={setAdes} options={AIRPORTS.map((a) => ({ value: a.icao, label: `${a.icao}${a.name ? " · " + a.name : ""}` }))} placeholder="Airport" />
+            </Field>
+            <Field label="RWY">
+              <Select value={adesRwy} onChange={setAdesRwy} options={runwaysFor(ades).map((r) => ({ value: r, label: r }))} placeholder="—" disabled={runwaysFor(ades).length === 0} />
+            </Field>
+            {RFD_DATA.stars[ades] ? (
+              <>
+                <Field label="STAR">
+                  <Select
+                    value={starIdx}
+                    onChange={(v) => { setStarIdx(v === null ? null : Number(v)); setStarTransIdx(null); }}
+                    options={availableStars.map((s) => ({ value: RFD_DATA.stars[ades].indexOf(s), label: s.name }))}
+                    placeholder="No STAR (vectors)"
+                  />
+                </Field>
+                {starIdx != null && RFD_DATA.stars[ades][starIdx].entryTransitions.length > 0 && (
+                  <Field label="STAR TRANSITION">
+                    <Select
+                      value={starTransIdx}
+                      onChange={(v) => setStarTransIdx(v === null ? null : Number(v))}
+                      options={RFD_DATA.stars[ades][starIdx].entryTransitions.map((t, i) => ({ value: i, label: t.name }))}
+                      placeholder="Select transition"
+                    />
+                  </Field>
+                )}
+              </>
+            ) : (
+              <div className="gw-note gw-span2">No published STAR data for {ades} yet — direct routing only.</div>
+            )}
+          </div>
+
+          <Field label="ENROUTE FIXES (free route — no fixed airways in ATC24)">
+            <FixPicker fixes={enrouteFixes} onAdd={(f) => setEnrouteFixes((arr) => [...arr, f])} onRemove={(i) => setEnrouteFixes((arr) => arr.filter((_, idx) => idx !== i))} />
+          </Field>
+
+          <button className="gw-buildbtn" onClick={handleBuild}>BUILD ROUTE <ChevronRight size={14} /></button>
+        </div>
+      )}
+
+      <div className="gw-split">
+        <div className="gw-panel gw-split-left">
+          <div className="gw-panel-title-row">
+            <span className="gw-panel-title">WAYPOINTS</span>
+            {built && (
+              <div className="gw-simctl">
+                <button className="gw-modechip" onClick={() => setMode("sim")} data-active={mode === "sim"}>SIM</button>
+                <button className="gw-modechip" onClick={() => setMode("live")} data-active={mode === "live"}>LIVE</button>
+                {mode === "sim" && (
+                  <>
+                    <button className="gw-iconbtn" onClick={() => setSimPlaying((p) => !p)}>{simPlaying ? <Pause size={13} /> : <Play size={13} />}</button>
+                    <button className="gw-iconbtn" onClick={() => { setSimIdx(0); setSimPlaying(false); }}><RotateCcw size={13} /></button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+          <WaypointTable nodes={built ? built.nodes : []} currentIdx={currentIdx} />
+          <div className="gw-routestring">
+            <div className="gw-routestring-label">ROUTE STRING</div>
+            <div className="gw-routestring-text">{built ? built.routeString : "— build a route to see it here —"}</div>
+          </div>
+        </div>
+        <div className="gw-panel gw-split-right">
+          <SchematicMap nodes={built ? built.nodes : []} currentIdx={currentIdx} />
+        </div>
+      </div>
+
+      <SummaryCards
+        cfg={cfgForCards} built={built} mode={mode} simPlaying={simPlaying}
+        liveStatus={liveStatus} liveAircraft={liveAircraft}
+        currentNode={currentNode} nextNode={nextNode}
+      />
+    </>
+  );
+}
+
 // ---------- main app ----------
 
+const ROUTE_INDEX_KEY = "gateway:route-names";
+
 export default function Gateway() {
+  const [section, setSection] = useState("flightplan");
+
   const [adep, setAdep] = useState("IRFD");
   const [adepRwy, setAdepRwy] = useState("25L");
   const [sidIdx, setSidIdx] = useState(null);
@@ -347,54 +758,98 @@ export default function Gateway() {
   const [starTransIdx, setStarTransIdx] = useState(null);
   const [built, setBuilt] = useState(null);
 
-  const [mode, setMode] = useState("sim"); // 'sim' | 'live'
+  const [mode, setMode] = useState("sim");
   const [simPlaying, setSimPlaying] = useState(false);
   const [simIdx, setSimIdx] = useState(0);
   const [robloxName, setRobloxName] = useState("");
   const [backendUrl, setBackendUrl] = useState("http://localhost:8420");
-  const [liveStatus, setLiveStatus] = useState("idle"); // idle | connecting | live | error
+  const [liveStatus, setLiveStatus] = useState("idle");
   const [liveAircraft, setLiveAircraft] = useState(null);
+  const [savedRoutes, setSavedRoutes] = useState([]);
+  const [toast, setToast] = useState(null);
 
   const availableSids = useMemo(() => sidsForRunway(adep, adepRwy), [adep, adepRwy]);
   const availableStars = useMemo(() => (RFD_DATA.stars[ades] ? starsForRunway(ades, adesRwy) : []), [ades, adesRwy]);
 
-  useEffect(() => {
-    const rwys = runwaysFor(adep);
-    setAdepRwy(rwys[0] || null);
-    setSidIdx(null); setSidTransIdx(null);
-  }, [adep]);
-  useEffect(() => {
-    const rwys = runwaysFor(ades);
-    setAdesRwy(rwys[0] || null);
-    setStarIdx(null); setStarTransIdx(null);
-  }, [ades]);
-
+  useEffect(() => { const r = runwaysFor(adep); setAdepRwy(r[0] || null); setSidIdx(null); setSidTransIdx(null); }, [adep]);
+  useEffect(() => { const r = runwaysFor(ades); setAdesRwy(r[0] || null); setStarIdx(null); setStarTransIdx(null); }, [ades]);
   useEffect(() => { setSidIdx(null); setSidTransIdx(null); }, [adepRwy]);
-  useEffect(() => { setStarIdx(null); setStarTransIdx(null); }, [adesRwy, ades]);
+  useEffect(() => { setStarIdx(null); setStarTransIdx(null); }, [adesRwy]);
+
+  // load saved-route index on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await window.storage.get(ROUTE_INDEX_KEY);
+        if (res) setSavedRoutes(JSON.parse(res.value));
+      } catch (e) { /* no saved routes yet */ }
+    })();
+  }, []);
+
+  function showToast(msg) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2200);
+  }
 
   const handleBuild = () => {
-    const result = buildRoute({
-      adep, adepRwy, sidIdx, sidTransIdx,
-      enrouteFixes, starIdx, starTransIdx, ades, adesRwy,
-    });
+    const result = buildRoute({ adep, adepRwy, sidIdx, sidTransIdx, enrouteFixes, starIdx, starTransIdx, ades, adesRwy });
     setBuilt(result);
     setSimIdx(0);
     setSimPlaying(false);
   };
 
-  // simulation playback
+  const handleReverse = () => {
+    const cfg = { adep: ades, adepRwy: adesRwy, ades: adep, adesRwy: adepRwy };
+    setAdep(cfg.adep); setAdes(cfg.ades);
+    setEnrouteFixes((f) => [...f].reverse());
+    setSidIdx(null); setSidTransIdx(null); setStarIdx(null); setStarTransIdx(null);
+    setBuilt(null);
+  };
+  const handleClear = () => {
+    setSidIdx(null); setSidTransIdx(null); setStarIdx(null); setStarTransIdx(null);
+    setEnrouteFixes([]); setBuilt(null); setSimIdx(0); setSimPlaying(false);
+  };
+  const handleShare = async () => {
+    if (!built) { showToast("Build a route first"); return; }
+    try {
+      await navigator.clipboard.writeText(built.routeString);
+      showToast("Route string copied");
+    } catch (e) { showToast("Couldn't copy — copy it manually from the panel"); }
+  };
+  const handleSave = async () => {
+    if (!built) { showToast("Build a route first"); return; }
+    const name = window.prompt("Name this route:", `${adep}-${ades}`);
+    if (!name) return;
+    const cfg = { adep, adepRwy, sidIdx, sidTransIdx, enrouteFixes, ades, adesRwy, starIdx, starTransIdx };
+    try {
+      await window.storage.set(`route:${name}`, JSON.stringify(cfg));
+      const names = Array.from(new Set([...savedRoutes, name]));
+      setSavedRoutes(names);
+      await window.storage.set(ROUTE_INDEX_KEY, JSON.stringify(names));
+      showToast(`Saved "${name}"`);
+    } catch (e) { showToast("Save failed"); }
+  };
+  const handleLoad = async (name) => {
+    try {
+      const res = await window.storage.get(`route:${name}`);
+      if (!res) return;
+      const cfg = JSON.parse(res.value);
+      setAdep(cfg.adep); setAdepRwy(cfg.adepRwy); setSidIdx(cfg.sidIdx); setSidTransIdx(cfg.sidTransIdx);
+      setEnrouteFixes(cfg.enrouteFixes || []);
+      setAdes(cfg.ades); setAdesRwy(cfg.adesRwy); setStarIdx(cfg.starIdx); setStarTransIdx(cfg.starTransIdx);
+      setBuilt(null);
+      showToast(`Loaded "${name}"`);
+    } catch (e) { showToast("Load failed"); }
+  };
+
   useEffect(() => {
     if (!simPlaying || !built) return;
     const id = setInterval(() => {
-      setSimIdx((i) => {
-        if (i >= built.nodes.length - 1) { setSimPlaying(false); return i; }
-        return i + 1;
-      });
+      setSimIdx((i) => { if (i >= built.nodes.length - 1) { setSimPlaying(false); return i; } return i + 1; });
     }, 2200);
     return () => clearInterval(id);
   }, [simPlaying, built]);
 
-  // live polling
   useEffect(() => {
     if (mode !== "live" || !robloxName || !backendUrl) return;
     let cancelled = false;
@@ -405,12 +860,8 @@ export default function Gateway() {
         if (!res.ok) throw new Error("not found");
         const data = await res.json();
         if (cancelled) return;
-        setLiveAircraft(data);
-        setLiveStatus("live");
-      } catch (e) {
-        if (cancelled) return;
-        setLiveStatus("error");
-      }
+        setLiveAircraft(data); setLiveStatus("live");
+      } catch (e) { if (!cancelled) setLiveStatus("error"); }
     };
     poll();
     const id = setInterval(poll, 3000);
@@ -428,173 +879,48 @@ export default function Gateway() {
   const currentNode = built ? built.nodes[currentIdx] : null;
   const nextNode = built ? built.nodes[currentIdx + 1] : null;
 
+  const cfgForCards = {
+    adep, adepRwy, ades, adesRwy,
+    sidName: adep && RFD_DATA.sids[adep] && sidIdx != null ? RFD_DATA.sids[adep][sidIdx].name : null,
+    starName: ades && RFD_DATA.stars[ades] && starIdx != null ? RFD_DATA.stars[ades][starIdx].name : null,
+  };
+
   return (
     <div className="gw-root">
       <style>{CSS}</style>
-
-      <header className="gw-header">
-        <div className="gw-brand">
-          <Navigation2 size={20} strokeWidth={2.2} />
-          <span className="gw-brand-text">GATEWAY</span>
-          <span className="gw-brand-tag">route planning · atc24</span>
-        </div>
-        <div className="gw-modepick">
-          <button className={"gw-modebtn" + (mode === "sim" ? " active" : "")} onClick={() => setMode("sim")}>SIMULATE</button>
-          <button className={"gw-modebtn" + (mode === "live" ? " active" : "")} onClick={() => setMode("live")}>LIVE</button>
-        </div>
-      </header>
-
-      <div className="gw-body">
-        {/* ---- left: builder ---- */}
-        <div className="gw-panel gw-builder">
-          <div className="gw-panel-title">FLIGHT PLAN</div>
-
-          <div className="gw-row2">
-            <Field label="DEPARTURE">
-              <Select value={adep} onChange={setAdep} options={AIRPORTS.map((a) => ({ value: a.icao, label: `${a.icao}${a.name ? " · " + a.name : ""}` }))} placeholder="Airport" />
-            </Field>
-            <Field label="RWY">
-              <Select value={adepRwy} onChange={setAdepRwy} options={runwaysFor(adep).map((r) => ({ value: r, label: r }))} placeholder="—" disabled={runwaysFor(adep).length === 0} />
-            </Field>
-          </div>
-
-          {RFD_DATA.sids[adep] ? (
-            <>
-              <Field label="SID">
-                <Select
-                  value={sidIdx}
-                  onChange={(v) => { setSidIdx(v === null ? null : Number(v)); setSidTransIdx(null); }}
-                  options={availableSids.map((s) => ({ value: RFD_DATA.sids[adep].indexOf(s), label: s.name }))}
-                  placeholder="No SID (vectors)"
-                />
-              </Field>
-              {sidIdx != null && RFD_DATA.sids[adep][sidIdx].transitions.length > 0 && (
-                <Field label="SID TRANSITION">
-                  <Select
-                    value={sidTransIdx}
-                    onChange={(v) => setSidTransIdx(v === null ? null : Number(v))}
-                    options={RFD_DATA.sids[adep][sidIdx].transitions.map((t, i) => ({ value: i, label: t.name }))}
-                    placeholder="Select transition"
-                  />
-                </Field>
-              )}
-            </>
-          ) : (
-            <div className="gw-note">No published SID data for {adep} yet — direct routing only.</div>
-          )}
-
-          <Field label="ENROUTE (free route — no fixed airways in ATC24)">
-            <FixPicker
-              fixes={enrouteFixes}
-              onAdd={(f) => setEnrouteFixes((arr) => [...arr, f])}
-              onRemove={(i) => setEnrouteFixes((arr) => arr.filter((_, idx) => idx !== i))}
+      <Sidebar section={section} setSection={setSection} />
+      <div className="gw-main">
+        <TopBar />
+        <div className="gw-content">
+          {section === "flightplan" && (
+            <FlightPlanPage
+              adep={adep} setAdep={setAdep} adepRwy={adepRwy} setAdepRwy={setAdepRwy}
+              sidIdx={sidIdx} setSidIdx={setSidIdx} sidTransIdx={sidTransIdx} setSidTransIdx={setSidTransIdx}
+              enrouteFixes={enrouteFixes} setEnrouteFixes={setEnrouteFixes}
+              ades={ades} setAdes={setAdes} adesRwy={adesRwy} setAdesRwy={setAdesRwy}
+              starIdx={starIdx} setStarIdx={setStarIdx} starTransIdx={starTransIdx} setStarTransIdx={setStarTransIdx}
+              built={built} handleBuild={handleBuild} availableSids={availableSids} availableStars={availableStars}
+              mode={mode} setMode={setMode} simPlaying={simPlaying} setSimPlaying={setSimPlaying}
+              simIdx={simIdx} setSimIdx={setSimIdx} currentIdx={currentIdx} currentNode={currentNode} nextNode={nextNode}
+              liveStatus={liveStatus} liveAircraft={liveAircraft}
+              onReverse={handleReverse} onClear={handleClear} onSave={handleSave} onShare={handleShare}
+              savedRoutes={savedRoutes} onLoad={handleLoad}
+              cfgForCards={cfgForCards}
             />
-          </Field>
-
-          <div className="gw-row2">
-            <Field label="ARRIVAL">
-              <Select value={ades} onChange={setAdes} options={AIRPORTS.map((a) => ({ value: a.icao, label: `${a.icao}${a.name ? " · " + a.name : ""}` }))} placeholder="Airport" />
-            </Field>
-            <Field label="RWY">
-              <Select value={adesRwy} onChange={setAdesRwy} options={runwaysFor(ades).map((r) => ({ value: r, label: r }))} placeholder="—" disabled={runwaysFor(ades).length === 0} />
-            </Field>
-          </div>
-
-          {RFD_DATA.stars[ades] ? (
-            <>
-              <Field label="STAR">
-                <Select
-                  value={starIdx}
-                  onChange={(v) => { setStarIdx(v === null ? null : Number(v)); setStarTransIdx(null); }}
-                  options={availableStars.map((s) => ({ value: RFD_DATA.stars[ades].indexOf(s), label: s.name }))}
-                  placeholder="No STAR (vectors)"
-                />
-              </Field>
-              {starIdx != null && RFD_DATA.stars[ades][starIdx].entryTransitions.length > 0 && (
-                <Field label="STAR TRANSITION">
-                  <Select
-                    value={starTransIdx}
-                    onChange={(v) => setStarTransIdx(v === null ? null : Number(v))}
-                    options={RFD_DATA.stars[ades][starIdx].entryTransitions.map((t, i) => ({ value: i, label: t.name }))}
-                    placeholder="Select transition"
-                  />
-                </Field>
-              )}
-            </>
-          ) : (
-            <div className="gw-note">No published STAR data for {ades} yet — direct routing only.</div>
           )}
-
-          <button className="gw-buildbtn" onClick={handleBuild}>
-            BUILD ROUTE <ChevronRight size={14} />
-          </button>
-        </div>
-
-        {/* ---- right: readout ---- */}
-        <div className="gw-main">
-          <div className="gw-panel gw-routestring">
-            <div className="gw-panel-title">ROUTE STRING</div>
-            <div className="gw-routestring-text">{built ? built.routeString : "— build a route to see it here —"}</div>
-          </div>
-
-          <div className="gw-panel">
-            <div className="gw-panel-title-row">
-              <span className="gw-panel-title">PROGRESS</span>
-              {mode === "sim" ? (
-                <div className="gw-simctl">
-                  <button className="gw-iconbtn" onClick={() => setSimPlaying((p) => !p)} disabled={!built}>
-                    {simPlaying ? <Pause size={13} /> : <Play size={13} />}
-                  </button>
-                  <button className="gw-iconbtn" onClick={() => { setSimIdx(0); setSimPlaying(false); }} disabled={!built}>
-                    <RotateCcw size={13} />
-                  </button>
-                </div>
-              ) : (
-                <div className="gw-livestatus">
-                  {liveStatus === "live" ? <Wifi size={13} color="var(--green)" /> : <WifiOff size={13} color="var(--text-dim)" />}
-                  <span>{liveStatus.toUpperCase()}</span>
-                </div>
-              )}
-            </div>
-
-            {mode === "live" && (
-              <div className="gw-liveform">
-                <input className="gw-input" placeholder="Roblox username" value={robloxName} onChange={(e) => setRobloxName(e.target.value)} />
-                <input className="gw-input" placeholder="Backend URL (your Node relay)" value={backendUrl} onChange={(e) => setBackendUrl(e.target.value)} />
-                {liveStatus === "error" && (
-                  <div className="gw-note gw-note-warn">
-                    Couldn't reach a backend at that URL. A browser can't talk to 24data directly (CORS) —
-                    this needs your own small relay server. Switch to SIMULATE to preview the UI, or run the
-                    provided backend and point this at it.
-                  </div>
-                )}
-              </div>
-            )}
-
-            <RouteTape nodes={built ? built.nodes : []} currentIdx={currentIdx} />
-
-            {built && currentNode && (
-              <div className="gw-nownext">
-                <div className="gw-now">
-                  <div className="gw-now-label">AT</div>
-                  <div className="gw-now-fix">{currentNode.name}</div>
-                </div>
-                <ChevronRight size={16} color="var(--text-dim)" />
-                {nextNode ? (
-                  <div className="gw-now">
-                    <div className="gw-now-label">NEXT — {nextNode.trackIn != null ? `TURN TO ${String(nextNode.trackIn).padStart(3, "0")}°` : "DIRECT"}</div>
-                    <div className="gw-now-fix">{nextNode.name}{nextNode.alt ? ` · ${nextNode.alt}` : ""}</div>
-                  </div>
-                ) : (
-                  <div className="gw-now"><div className="gw-now-fix">END OF ROUTE</div></div>
-                )}
-              </div>
-            )}
-
-            <LegTable nodes={built ? built.nodes : []} currentIdx={currentIdx} />
-          </div>
+          {section === "settings" && (
+            <SettingsPage robloxName={robloxName} setRobloxName={setRobloxName} backendUrl={backendUrl} setBackendUrl={setBackendUrl} liveStatus={liveStatus} />
+          )}
+          {section !== "flightplan" && section !== "settings" && (
+            <PlaceholderPage
+              label={NAV_SECTIONS.find((s) => s.id === section)?.label || section}
+              icon={NAV_SECTIONS.find((s) => s.id === section)?.icon || FileText}
+              blurb={PLACEHOLDER_BLURBS[section] || "Not built yet."}
+            />
+          )}
         </div>
       </div>
+      {toast && <div className="gw-toast">{toast}</div>}
     </div>
   );
 }
@@ -603,124 +929,194 @@ const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 .gw-root {
-  --bg: #0A0E13;
-  --panel: #121820;
-  --panel-2: #1A2229;
-  --border: #263139;
-  --text: #E7EDF3;
-  --text-dim: #7E8FA0;
+  --bg: #0A0D13;
+  --sidebar-bg: #0B0E15;
+  --panel: #11151D;
+  --panel-2: #171C26;
+  --border: #222836;
+  --text: #E6EAF2;
+  --text-dim: #7C8598;
+  --blue: #3E7BFA;
+  --blue-dim: rgba(62,123,250,0.14);
   --amber: #F2A93B;
   --cyan: #49C7E8;
   --magenta: #F0529E;
-  --magenta-dim: rgba(240, 82, 158, 0.16);
-  --green: #52D68A;
-  --green-dim: rgba(82, 214, 138, 0.14);
-  --red: #D8524A;
+  --magenta-dim: rgba(240,82,158,0.16);
+  --green: #22C55E;
+  --green-dim: rgba(34,197,94,0.14);
+  --red: #EF4444;
+  --map-grid: rgba(255,255,255,0.035);
 
+  display: flex;
+  min-height: 100vh;
   background: var(--bg);
   color: var(--text);
   font-family: 'IBM Plex Sans', sans-serif;
-  min-height: 100vh;
-  padding: 18px;
-  box-sizing: border-box;
 }
 .gw-root * { box-sizing: border-box; }
+.gw-root code { font-family: 'IBM Plex Mono', monospace; background: var(--panel-2); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; }
 
-.gw-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 4px 4px 16px 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px;
+/* ---- sidebar ---- */
+.gw-sidebar {
+  width: 216px; flex-shrink: 0; background: var(--sidebar-bg); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; padding: 16px 10px; gap: 4px; position: sticky; top: 0; height: 100vh;
 }
-.gw-brand { display: flex; align-items: center; gap: 9px; color: var(--amber); }
-.gw-brand-text { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 19px; letter-spacing: 0.04em; color: var(--text); }
-.gw-brand-tag { font-size: 11px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.02em; margin-left: 2px; }
-.gw-modepick { display: flex; gap: 2px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 4px; padding: 2px; }
-.gw-modebtn { background: transparent; border: none; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; padding: 6px 12px; border-radius: 3px; cursor: pointer; }
-.gw-modebtn.active { background: var(--amber); color: #1A1200; font-weight: 600; }
+.gw-sidebar-brand { display: flex; align-items: center; gap: 8px; padding: 6px 8px 16px 8px; color: var(--blue); }
+.gw-brand-word { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.06em; color: var(--text); }
+.gw-sidebar-nav { display: flex; flex-direction: column; gap: 1px; flex: 1; overflow-y: auto; }
+.gw-navitem {
+  display: flex; align-items: center; gap: 10px; background: transparent; border: none; color: var(--text-dim);
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 13px; font-weight: 500; padding: 9px 10px; border-radius: 6px;
+  cursor: pointer; text-align: left; width: 100%;
+}
+.gw-navitem:hover { background: var(--panel-2); color: var(--text); }
+.gw-navitem.active { background: var(--blue-dim); color: var(--blue); }
+.gw-navitem.dimmed { opacity: 0.62; }
+.gw-sidebar-status { margin: 10px 4px; padding: 12px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+.gw-status-title { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 8px; }
+.gw-status-row { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--text); margin-bottom: 5px; }
+.gw-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-dim); flex-shrink: 0; }
+.gw-status-dot.live { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.gw-status-sub { font-size: 11px; color: var(--text-dim); }
+.gw-settings-btn { border-top: 1px solid var(--border); margin-top: 6px; padding-top: 12px; }
 
-.gw-body { display: grid; grid-template-columns: 300px 1fr; gap: 16px; align-items: start; }
-@media (max-width: 860px) { .gw-body { grid-template-columns: 1fr; } }
+/* ---- topbar / main ---- */
+.gw-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.gw-topbar { display: flex; align-items: center; padding: 12px 24px; border-bottom: 1px solid var(--border); }
+.gw-topbar-spacer { flex: 1; }
+.gw-topbar-right { display: flex; align-items: center; gap: 10px; }
+.gw-network-pill { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-dim); background: var(--panel); border: 1px solid var(--border); padding: 6px 11px; border-radius: 999px; }
+.gw-iconbtn-ghost { background: transparent; border: none; color: var(--text-dim); padding: 6px; border-radius: 6px; cursor: pointer; display: flex; }
+.gw-iconbtn-ghost:hover { background: var(--panel-2); color: var(--text); }
+.gw-content { padding: 24px 28px 40px 28px; overflow-y: auto; }
 
-.gw-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 5px; padding: 14px; margin-bottom: 16px; }
-.gw-panel-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 12px; }
-.gw-panel-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+/* ---- placeholder page ---- */
+.gw-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 90px 20px; color: var(--text-dim); max-width: 440px; margin: 0 auto; }
+.gw-placeholder-icon { color: var(--text-dim); margin-bottom: 16px; opacity: 0.7; }
+.gw-placeholder-title { font-family: 'Space Grotesk', sans-serif; font-size: 19px; color: var(--text); margin-bottom: 10px; }
+.gw-placeholder-blurb { font-size: 13px; line-height: 1.6; margin-bottom: 16px; }
+.gw-placeholder-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: var(--text-dim); border: 1px dashed var(--border); padding: 4px 10px; border-radius: 999px; }
 
-.gw-builder { position: sticky; top: 18px; }
-.gw-row2 { display: grid; grid-template-columns: 1fr 84px; gap: 8px; }
-.gw-field { margin-bottom: 11px; }
-.gw-field-label { display: block; font-size: 10px; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 5px; font-family: 'IBM Plex Mono', monospace; }
+/* ---- route header ---- */
+.gw-routeheader { margin-bottom: 6px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px; }
+.gw-routeheader-title { display: flex; align-items: center; gap: 12px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; color: var(--text); }
+.gw-routeheader-star { color: var(--text-dim); margin-left: 4px; cursor: pointer; }
+.gw-routeheader-sub { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
+.gw-routeheader-actions { display: flex; gap: 8px; flex-wrap: wrap; position: relative; }
+.gw-btn-ghost, .gw-btn-outline, .gw-btn-primary {
+  display: flex; align-items: center; gap: 6px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; font-weight: 500;
+  padding: 8px 13px; border-radius: 6px; cursor: pointer;
+}
+.gw-btn-ghost { background: transparent; border: 1px solid transparent; color: var(--text-dim); }
+.gw-btn-ghost:hover { background: var(--panel-2); color: var(--text); }
+.gw-btn-outline { background: var(--panel); border: 1px solid var(--border); color: var(--text); }
+.gw-btn-outline:hover { border-color: var(--blue); }
+.gw-btn-primary { background: var(--blue); border: 1px solid var(--blue); color: #fff; }
+.gw-btn-primary:hover { background: #5A8FFF; }
+.gw-savewrap { position: relative; }
+.gw-loadmenu { position: absolute; top: calc(100% + 4px); right: 0; min-width: 180px; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 10px 24px rgba(0,0,0,0.5); z-index: 30; overflow: hidden; }
+.gw-loadmenu-empty { padding: 12px; font-size: 12px; color: var(--text-dim); }
+.gw-loadmenu-row { padding: 10px 12px; font-size: 12.5px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; }
+.gw-loadmenu-row:hover { background: var(--panel-2); }
 
+/* ---- tabs ---- */
+.gw-tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--border); margin: 18px 0 20px 0; }
+.gw-tab { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; letter-spacing: 0.05em; color: var(--text-dim); padding-bottom: 11px; border-bottom: 2px solid transparent; cursor: default; }
+.gw-tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+.gw-tab.dimmed { opacity: 0.45; cursor: not-allowed; }
+
+/* ---- panels / fields (shared) ---- */
+.gw-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+.gw-panel-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.09em; color: var(--text-dim); }
+.gw-panel-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.gw-setup-toggle { display: flex; align-items: center; gap: 6px; background: transparent; border: none; color: var(--text-dim); font-size: 12px; font-family: 'IBM Plex Mono', monospace; cursor: pointer; margin-bottom: 10px; padding: 0; }
+.gw-setup-toggle:hover { color: var(--text); }
+.gw-setup { margin-bottom: 18px; }
+.gw-setup-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+.gw-span2 { grid-column: span 4; }
+@media (max-width: 900px) { .gw-setup-grid { grid-template-columns: repeat(2, 1fr); } .gw-span2 { grid-column: span 2; } }
+
+.gw-field { display: flex; flex-direction: column; }
+.gw-field-label { font-size: 10px; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 5px; font-family: 'IBM Plex Mono', monospace; }
 .gw-select-wrap { position: relative; }
-.gw-select {
-  width: 100%; background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
-  font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; padding: 8px 26px 8px 9px; border-radius: 4px;
-  appearance: none; cursor: pointer;
-}
-.gw-select:disabled { opacity: 0.45; cursor: not-allowed; }
+.gw-select { width: 100%; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; padding: 8px 26px 8px 9px; border-radius: 6px; appearance: none; cursor: pointer; }
+.gw-select:disabled { opacity: 0.4; cursor: not-allowed; }
 .gw-select-chevron { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-dim); }
-
-.gw-input {
-  width: 100%; background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
-  font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 8px 9px; border-radius: 4px;
-}
+.gw-input { width: 100%; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 8px 9px; border-radius: 6px; }
 .gw-input::placeholder { color: var(--text-dim); font-family: 'IBM Plex Sans', sans-serif; }
-
-.gw-note { font-size: 11.5px; color: var(--text-dim); line-height: 1.5; padding: 8px 10px; background: var(--panel-2); border-radius: 4px; border: 1px dashed var(--border); margin-bottom: 11px; }
-.gw-note-warn { border-color: var(--amber); color: var(--amber); margin-top: 8px; }
+.gw-note { font-size: 11.5px; color: var(--text-dim); line-height: 1.5; padding: 10px 12px; background: var(--panel-2); border-radius: 6px; border: 1px dashed var(--border); }
 
 .gw-fixpicker { }
 .gw-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
-.gw-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 4px 6px 4px 9px; border-radius: 3px; }
+.gw-chip { display: inline-flex; align-items: center; gap: 5px; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 4px 6px 4px 9px; border-radius: 999px; }
 .gw-chip-x { cursor: pointer; color: var(--text-dim); }
 .gw-chip-x:hover { color: var(--red); }
 .gw-fixinput-wrap { position: relative; }
-.gw-suggest { position: absolute; z-index: 20; top: calc(100% + 3px); left: 0; right: 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.4); }
+.gw-suggest { position: absolute; z-index: 20; top: calc(100% + 3px); left: 0; right: 0; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; box-shadow: 0 10px 24px rgba(0,0,0,0.5); }
 .gw-suggest-row { display: flex; justify-content: space-between; padding: 7px 9px; cursor: pointer; font-size: 12px; }
 .gw-suggest-row:hover { background: var(--bg); }
 .gw-suggest-name { font-family: 'IBM Plex Mono', monospace; color: var(--text); }
 .gw-suggest-kind { color: var(--text-dim); font-size: 10.5px; }
 
-.gw-buildbtn {
-  width: 100%; background: var(--amber); color: #1A1200; border: none; border-radius: 4px;
-  padding: 10px; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 12px; letter-spacing: 0.06em;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 4px;
-}
-.gw-buildbtn:hover { background: #FFC169; }
+.gw-buildbtn { width: 100%; background: var(--blue); color: #fff; border: none; border-radius: 7px; padding: 11px; font-family: 'IBM Plex Sans', sans-serif; font-weight: 600; font-size: 12.5px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 6px; }
+.gw-buildbtn:hover { background: #5A8FFF; }
 
-.gw-routestring-text { font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: var(--cyan); word-break: break-word; line-height: 1.7; }
+/* ---- split: table + map ---- */
+.gw-split { display: grid; grid-template-columns: 1fr 1.15fr; gap: 16px; align-items: start; margin-bottom: 18px; }
+@media (max-width: 980px) { .gw-split { grid-template-columns: 1fr; } }
+.gw-split-left, .gw-split-right { padding: 14px; }
 
-.gw-simctl { display: flex; gap: 6px; }
-.gw-iconbtn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: 4px; padding: 5px 7px; cursor: pointer; display: flex; }
-.gw-iconbtn:disabled { opacity: 0.35; cursor: not-allowed; }
-.gw-livestatus { display: flex; align-items: center; gap: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--text-dim); letter-spacing: 0.06em; }
-.gw-liveform { display: flex; flex-direction: column; gap: 7px; margin: 10px 0 4px 0; }
+.gw-simctl { display: flex; align-items: center; gap: 6px; }
+.gw-modechip { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.05em; background: var(--panel-2); border: 1px solid var(--border); color: var(--text-dim); padding: 4px 9px; border-radius: 999px; cursor: pointer; }
+.gw-modechip[data-active="true"] { background: var(--blue-dim); border-color: var(--blue); color: var(--blue); }
+.gw-iconbtn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 5px 7px; cursor: pointer; display: flex; }
 
-.gw-tape { overflow-x: auto; padding: 22px 6px 10px 6px; margin: 6px 0 4px 0; }
-.gw-tape-empty { padding: 30px 0; text-align: center; color: var(--text-dim); font-size: 12.5px; }
-.gw-tape-track { display: flex; align-items: flex-end; min-width: max-content; }
-.gw-tape-line { width: 34px; height: 2px; margin-bottom: 27px; flex-shrink: 0; }
-.gw-tape-node-wrap { position: relative; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
-.gw-tape-plane { position: absolute; top: -20px; color: var(--magenta); }
-.gw-tape-node {
-  border: 2px solid; border-radius: 4px; padding: 5px 8px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px;
-  font-weight: 600; white-space: nowrap; color: var(--text);
-}
-.gw-tape-node-apt { border-radius: 50%; padding: 8px 10px; }
-.gw-tape-node-hold::after { content: 'H'; }
-.gw-tape-alt { font-size: 9px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; margin-top: 4px; height: 11px; }
-.gw-tape-track-label { font-size: 9px; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; }
+.gw-table-empty { padding: 30px 0; text-align: center; color: var(--text-dim); font-size: 12.5px; }
+.gw-wptable { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+.gw-wptable-head { display: grid; grid-template-columns: 26px 1fr 90px 60px 70px; background: var(--panel-2); padding: 8px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.06em; color: var(--text-dim); }
+.gw-wptable-body { max-height: 320px; overflow-y: auto; }
+.gw-wprow { display: grid; grid-template-columns: 26px 1fr 90px 60px 70px; padding: 8px 10px; font-size: 11.5px; border-top: 1px solid var(--border); font-family: 'IBM Plex Mono', monospace; align-items: center; }
+.gw-wprow-idx { color: var(--text-dim); }
+.gw-wprow.current { background: var(--magenta-dim); }
+.gw-wprow.current .gw-wprow-name { color: var(--magenta); font-weight: 600; }
+.gw-wprow.past { opacity: 0.5; }
+.gw-wprow-alt { color: var(--text-dim); font-size: 10.5px; }
+.gw-holdtag { font-size: 8.5px; background: var(--amber); color: #1A1200; padding: 1px 5px; border-radius: 4px; margin-left: 6px; letter-spacing: 0.04em; }
 
-.gw-nownext { display: flex; align-items: center; gap: 12px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 4px; padding: 10px 14px; margin: 10px 0 14px 0; }
-.gw-now { flex: 1; }
-.gw-now-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 3px; }
-.gw-now-fix { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: var(--magenta); }
+.gw-routestring { border-top: 1px solid var(--border); padding-top: 12px; }
+.gw-routestring-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 6px; }
+.gw-routestring-text { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--cyan); line-height: 1.7; word-break: break-word; }
 
-.gw-legtable { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-.gw-legtable-head { display: grid; grid-template-columns: 30px 1fr 74px 60px 1.2fr; background: var(--panel-2); padding: 7px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.06em; color: var(--text-dim); }
-.gw-legtable-body { max-height: 280px; overflow-y: auto; }
-.gw-legrow { display: grid; grid-template-columns: 30px 1fr 74px 60px 1.2fr; padding: 7px 10px; font-size: 11.5px; border-top: 1px solid var(--border); font-family: 'IBM Plex Mono', monospace; }
-.gw-legrow-idx { color: var(--text-dim); }
-.gw-legrow-current { background: var(--magenta-dim); }
-.gw-legrow-current .gw-legrow-fix { color: var(--magenta); font-weight: 600; }
-.gw-legrow-past { opacity: 0.5; }
-.gw-legrow-alt { color: var(--text-dim); font-size: 10.5px; }
+/* ---- map ---- */
+.gw-map { display: flex; flex-direction: column; height: 100%; }
+.gw-map-toolbar { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.gw-map-toolbar-spacer { flex: 1; }
+.gw-maptool { display: flex; align-items: center; gap: 5px; background: var(--panel-2); border: 1px solid var(--border); color: var(--text-dim); font-size: 11px; font-family: 'IBM Plex Sans', sans-serif; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+.gw-mapzoom { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 5px 7px; border-radius: 6px; cursor: pointer; display: flex; }
+.gw-map-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 12.5px; min-height: 260px; }
+.gw-map-svg { width: 100%; min-height: 340px; flex: 1; background: #0D111A; border-radius: 8px; border: 1px solid var(--border); }
+.gw-map-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; fill: var(--text); }
+.gw-map-alt { font-family: 'IBM Plex Mono', monospace; font-size: 7.5px; fill: var(--text-dim); }
+.gw-map-caption { font-size: 10.5px; color: var(--text-dim); margin-top: 8px; text-align: center; }
+
+/* ---- summary cards ---- */
+.gw-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+@media (max-width: 980px) { .gw-cards { grid-template-columns: repeat(2, 1fr); } }
+.gw-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 15px; }
+.gw-card-title { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 12px; }
+.gw-card-row { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 0; border-top: 1px solid var(--border); }
+.gw-card-row:first-of-type { border-top: none; }
+.gw-card-row span:first-child { color: var(--text-dim); }
+.gw-card-row span:last-child { font-family: 'IBM Plex Mono', monospace; color: var(--text); }
+.gw-card-footnote { font-size: 10.5px; color: var(--text-dim); line-height: 1.5; margin-top: 8px; }
+.gw-live-ok { color: var(--green) !important; }
+
+/* ---- settings ---- */
+.gw-settings { max-width: 460px; }
+.gw-settings-blurb { font-size: 12.5px; color: var(--text-dim); line-height: 1.6; margin: 10px 0 18px 0; }
+.gw-settings-status { font-size: 12px; color: var(--text-dim); margin-top: 12px; font-family: 'IBM Plex Mono', monospace; }
+.gw-settings .gw-field { margin-bottom: 14px; }
+
+/* ---- toast ---- */
+.gw-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--blue); color: var(--text); font-size: 12.5px; padding: 10px 18px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 100; }
 `;

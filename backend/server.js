@@ -15,6 +15,7 @@
 import express from "express";
 import cors from "cors";
 import WebSocket from "ws";
+import { saveRoute, listRoutes, getRoute, deleteRoute } from "./storage.js";
 
 const PORT = process.env.PORT || 8420;
 const REST_BASE = "https://24data.ptfs.app";
@@ -75,6 +76,7 @@ pollRest();
 // ---- HTTP API for the Gateway frontend ----
 const app = express();
 app.use(cors()); // dev-friendly; lock this down to your real frontend origin in production
+app.use(express.json());
 
 app.get("/aircraft/:playerName", (req, res) => {
   const callsign = playerIndex.get(req.params.playerName.toLowerCase());
@@ -99,6 +101,29 @@ app.get("/aircraft/:playerName", (req, res) => {
 
 app.get("/health", (req, res) => {
   res.json({ ok: true, cachedAircraft: aircraftCache.size, trackedPlayers: playerIndex.size });
+});
+
+// ---- saved flight plans, scoped per Roblox username ----
+app.post("/routes/:user", (req, res) => {
+  const { name, config } = req.body || {};
+  if (!name || !config) return res.status(400).json({ error: "name and config required" });
+  saveRoute(req.params.user, name, config);
+  res.json({ ok: true });
+});
+
+app.get("/routes/:user", (req, res) => {
+  res.json({ routes: listRoutes(req.params.user) });
+});
+
+app.get("/routes/:user/:name", (req, res) => {
+  const config = getRoute(req.params.user, req.params.name);
+  if (!config) return res.status(404).json({ error: "not found" });
+  res.json({ config });
+});
+
+app.delete("/routes/:user/:name", (req, res) => {
+  deleteRoute(req.params.user, req.params.name);
+  res.json({ ok: true });
 });
 
 app.listen(PORT, () => console.log(`Gateway backend listening on :${PORT}`));

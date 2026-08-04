@@ -575,10 +575,11 @@ function SummaryCards({ cfg, built, mode, simPlaying, liveStatus, liveAircraft, 
 function SettingsPage({ robloxName, setRobloxName, backendUrl, setBackendUrl, liveStatus }) {
   return (
     <div className="gw-settings">
-      <div className="gw-panel-title">LIVE TRACKING</div>
+      <div className="gw-panel-title">LIVE TRACKING &amp; SAVED ROUTES</div>
       <p className="gw-settings-blurb">
         The browser can't reach 24data directly, so LIVE mode polls your own backend relay instead.
-        Run <code>gateway-backend/server.js</code> and point this at it.
+        Run <code>gateway-backend/server.js</code> and point this at it. Your username also scopes
+        Save/Load on the Flight Plan page — routes are saved per username, not per browser.
       </p>
       <Field label="ROBLOX USERNAME">
         <input className="gw-input" placeholder="Your Roblox username" value={robloxName} onChange={(e) => setRobloxName(e.target.value)} />
@@ -742,8 +743,6 @@ function FlightPlanPage(props) {
 
 // ---------- main app ----------
 
-const ROUTE_INDEX_KEY = "gateway:route-names";
-
 export default function Gateway() {
   const [section, setSection] = useState("flightplan");
 
@@ -776,15 +775,18 @@ export default function Gateway() {
   useEffect(() => { setSidIdx(null); setSidTransIdx(null); }, [adepRwy]);
   useEffect(() => { setStarIdx(null); setStarTransIdx(null); }, [adesRwy]);
 
-  // load saved-route index on mount
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await window.storage.get(ROUTE_INDEX_KEY);
-        if (res) setSavedRoutes(JSON.parse(res.value));
-      } catch (e) { /* no saved routes yet */ }
-    })();
-  }, []);
+  // load saved-route list from the backend whenever we know who's asking
+  const refreshSavedRoutes = useCallback(async () => {
+    if (!robloxName || !backendUrl) { setSavedRoutes([]); return; }
+    try {
+      const res = await fetch(`${backendUrl.replace(/\/$/, "")}/routes/${encodeURIComponent(robloxName)}`);
+      if (!res.ok) throw new Error("list failed");
+      const data = await res.json();
+      setSavedRoutes(data.routes || []);
+    } catch (e) { /* backend unreachable or no routes yet - leave list as-is */ }
+  }, [robloxName, backendUrl]);
+
+  useEffect(() => { refreshSavedRoutes(); }, [refreshSavedRoutes]);
 
   function showToast(msg) {
     setToast(msg);
@@ -818,22 +820,27 @@ export default function Gateway() {
   };
   const handleSave = async () => {
     if (!built) { showToast("Build a route first"); return; }
+    if (!robloxName) { showToast("Set your Roblox username in Settings first"); return; }
     const name = window.prompt("Name this route:", `${adep}-${ades}`);
     if (!name) return;
     const cfg = { adep, adepRwy, sidIdx, sidTransIdx, enrouteFixes, ades, adesRwy, starIdx, starTransIdx };
     try {
-      await window.storage.set(`route:${name}`, JSON.stringify(cfg));
-      const names = Array.from(new Set([...savedRoutes, name]));
-      setSavedRoutes(names);
-      await window.storage.set(ROUTE_INDEX_KEY, JSON.stringify(names));
+      const res = await fetch(`${backendUrl.replace(/\/$/, "")}/routes/${encodeURIComponent(robloxName)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, config: cfg }),
+      });
+      if (!res.ok) throw new Error("save failed");
+      await refreshSavedRoutes();
       showToast(`Saved "${name}"`);
-    } catch (e) { showToast("Save failed"); }
+    } catch (e) { showToast("Save failed — check the backend URL in Settings"); }
   };
   const handleLoad = async (name) => {
+    if (!robloxName) { showToast("Set your Roblox username in Settings first"); return; }
     try {
-      const res = await window.storage.get(`route:${name}`);
-      if (!res) return;
-      const cfg = JSON.parse(res.value);
+      const res = await fetch(`${backendUrl.replace(/\/$/, "")}/routes/${encodeURIComponent(robloxName)}/${encodeURIComponent(name)}`);
+      if (!res.ok) throw new Error("not found");
+      const { config: cfg } = await res.json();
       setAdep(cfg.adep); setAdepRwy(cfg.adepRwy); setSidIdx(cfg.sidIdx); setSidTransIdx(cfg.sidTransIdx);
       setEnrouteFixes(cfg.enrouteFixes || []);
       setAdes(cfg.ades); setAdesRwy(cfg.adesRwy); setStarIdx(cfg.starIdx); setStarTransIdx(cfg.starTransIdx);

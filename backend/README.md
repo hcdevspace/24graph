@@ -24,9 +24,31 @@ It will:
 - Also poll `GET /acft-data` every 3s as a fallback (20 req/min, matching 24data's suggested rate)
 - Cache the latest data per callsign, indexed by Roblox username (`playerName`)
 - Expose `GET /aircraft/:playerName` for the frontend to poll
+- Save/load flight plans per username (see below)
 
-Then in the Gateway artifact, switch to **LIVE** mode, enter your Roblox
-username and `http://localhost:8420` as the backend URL.
+Then in the Gateway app, switch to **LIVE** mode, enter your Roblox
+username and your backend URL (`http://localhost:8420` locally).
+
+## Saved routes
+
+The frontend's Save/Load buttons hit these, scoped by Roblox username so
+different people using the same deployed backend don't see each other's routes:
+
+- `POST /routes/:user` — body `{ name, config }` — save a route
+- `GET /routes/:user` — list saved route names for that user
+- `GET /routes/:user/:name` — fetch one route's config
+- `DELETE /routes/:user/:name` — delete one
+
+Storage lives in `storage.js`, currently a JSON file on local disk
+(`routes-store.json`, gitignored).
+
+**Important if you're deployed on Render's free tier (or similar)**: that
+filesystem is ephemeral — it resets on every redeploy, and isn't guaranteed
+to survive restarts either. Saved routes will work fine day-to-day, but
+expect them to disappear next time you push an update to the backend. If
+that becomes a real problem, swap `storage.js` for a client against a free
+hosted KV store (Upstash Redis is a good fit — same four exported functions,
+different implementation, nothing in `server.js` needs to change).
 
 ## Notes / next steps
 

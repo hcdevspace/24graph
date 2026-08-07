@@ -1,6 +1,6 @@
-// Gateway backend relay
+// 24graph backend relay
 // Connects ONCE to 24data (REST poll + WebSocket), caches aircraft state in memory,
-// and serves it to the Gateway frontend over plain HTTP+CORS.
+// and serves it to the 24graph frontend over plain HTTP+CORS.
 //
 // Why this has to exist: browsers can't call 24data directly (its Allow-Origin
 // header blocks 3rd-party clients, and 24data's WSS explicitly requires the
@@ -10,7 +10,7 @@
 // Run:
 //   npm install
 //   node server.js
-// Then point the Gateway frontend's "Backend URL" field at http://localhost:8420
+// Then point the 24graph frontend's "Backend URL" field at http://localhost:8420
 
 import express from "express";
 import cors from "cors";
@@ -26,6 +26,9 @@ const WSS_URL = "wss://24data.ptfs.app/wss";
 const aircraftCache = new Map();
 const playerIndex = new Map();
 
+// atis cache: airport ICAO -> { ...ATIS, updatedAt }
+const atisCache = new Map();
+
 function ingestAircraftData(dataObj, isEvent = false) {
   const now = Date.now();
   for (const [callsign, ac] of Object.entries(dataObj || {})) {
@@ -35,6 +38,14 @@ function ingestAircraftData(dataObj, isEvent = false) {
       playerIndex.set(ac.playerName.toLowerCase(), callsign);
     }
   }
+}
+
+function ingestAtis(atisObj) {
+  if (!atisObj || !atisObj.airport) return;
+  atisCache.set(atisObj.airport, { ...atisObj, updatedAt: Date.now() });
+}
+function ingestAtisList(list) {
+  (list || []).forEach(ingestAtis);
 }
 
 // ---- WebSocket connection (primary, near-real-time) ----
@@ -48,7 +59,8 @@ function connectWs() {
       const msg = JSON.parse(raw.toString());
       if (msg.t === "ACFT_DATA") ingestAircraftData(msg.d, false);
       else if (msg.t === "EVENT_ACFT_DATA") ingestAircraftData(msg.d, true);
-      // CONTROLLERS / ATIS / FLIGHT_PLAN could be cached here too if you need them later
+      else if (msg.t === "ATIS") ingestAtis(msg.d);
+      // CONTROLLERS / FLIGHT_PLAN could be cached here too if you need them later
     } catch (e) {
       console.error("[24data] bad message", e.message);
     }
@@ -73,9 +85,28 @@ async function pollRest() {
 }
 pollRest();
 
-// ---- HTTP API for the Gateway frontend ----
+// ---- ATIS REST poll (10 req/min suggested rate = every 6s) ----
+// Docs note this can 503 if ATC24 Bot is offline and 24data has since restarted -
+// that's expected/transient, not an error worth logging loudly.
+async function pollAtis() {
+  try {
+    const res = await fetch(`${REST_BASE}/atis`);
+    if (res.ok) ingestAtisList(await res.json());
+    // 503 = bot offline, just skip this cycle and try again
+  } catch (e) {
+    console.error("[24data] atis poll failed", e.message);
+  }
+  setTimeout(pollAtis, 6000);
+}
+pollAtis();
+
+// ---- HTTP API for the 24graph frontend ----
 const app = express();
-app.use(cors()); // dev-friendly; lock this down to your real frontend origin in production
+const ALLOWED_ORIGINS = [
+  "https://24graph.vercel.app",
+  "http://localhost:5173", // Vite dev server, for local testing
+];
+app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json());
 
 app.get("/aircraft/:playerName", (req, res) => {
@@ -99,8 +130,14 @@ app.get("/aircraft/:playerName", (req, res) => {
   });
 });
 
+app.get("/atis/:icao", (req, res) => {
+  const atis = atisCache.get(req.params.icao.toUpperCase());
+  if (!atis) return res.status(404).json({ error: "no ATIS cached for this airport yet" });
+  res.json(atis);
+});
+
 app.get("/health", (req, res) => {
-  res.json({ ok: true, cachedAircraft: aircraftCache.size, trackedPlayers: playerIndex.size });
+  res.json({ ok: true, cachedAircraft: aircraftCache.size, trackedPlayers: playerIndex.size, cachedAtis: atisCache.size });
 });
 
 // ---- saved flight plans, scoped per Roblox username ----
@@ -126,4 +163,4 @@ app.delete("/routes/:user/:name", (req, res) => {
   res.json({ ok: true });
 });
 
-app.listen(PORT, () => console.log(`Gateway backend listening on :${PORT}`));
+app.listen(PORT, () => console.log(`24graph backend listening on :${PORT}`));

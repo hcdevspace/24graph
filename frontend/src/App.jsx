@@ -19,12 +19,35 @@ function normalizeAirports() {
 }
 const AIRPORTS = normalizeAirports();
 const AIRPORTS_WITH_DATA = Object.keys(RFD_DATA.sids); // airports that have any procedure data at all
-function runwaysFor(icao) {
-  return (RFD_DATA.runwaysByAirport && RFD_DATA.runwaysByAirport[icao]) || [];
+function runwaysFor(icao, mode) {
+  const entry = RFD_DATA.runwaysByAirport && RFD_DATA.runwaysByAirport[icao];
+  return (entry && entry[mode]) || [];
 }
 
 // some charts (e.g. WNNDY3) give one universal instruction with no per-runway
 // breakdown - stored as rwys:['ALL'], which should match any selected runway.
+// Parses 24data's ATIS "DEP RWY X ARR RWY Y" line into runway idents,
+// expanding shorthand like "25L/C/R" -> ["25L","25C","25R"]. Confirmed
+// against a real in-game example (IRFD: "DEP RWY 25L ARR RWY 25C 25R") -
+// multiple runways on one side are SPACE-separated, not comma-separated,
+// which the split below accounts for.
+function expandRunwayToken(token) {
+  token = token.trim();
+  const m = token.match(/^(\d{2})([A-Z](?:\/[A-Z])*)$/);
+  if (m) {
+    const base = m[1];
+    return m[2].split("/").map((s) => base + s);
+  }
+  return token ? [token] : [];
+}
+function parseAtisRunways(text) {
+  if (!text) return null;
+  const match = text.match(/DEP\s+RWY\s+([^\n]+?)\s+ARR\s+RWY\s+([^\n]+?)(?:\n|$)/i);
+  if (!match) return null;
+  const parseSide = (s) => s.trim().split(/[\s,]+/).flatMap((part) => expandRunwayToken(part));
+  return { dep: parseSide(match[1]), arr: parseSide(match[2]) };
+}
+
 function rwysMatch(rwys, rwy) {
   return rwys.includes("ALL") || rwys.includes(rwy);
 }
@@ -257,12 +280,28 @@ function FixPicker({ fixes, onAdd, onRemove }) {
   );
 }
 
-function Field({ label, children }) {
+function Field({ label, extra, children }) {
   return (
     <div className="gw-field">
-      <label className="gw-field-label">{label}</label>
+      <div className="gw-field-labelrow">
+        <label className="gw-field-label">{label}</label>
+        {extra}
+      </div>
       {children}
     </div>
+  );
+}
+
+function AtisBadge({ atis, currentRwy }) {
+  if (!atis || !atis.suggestion) return null;
+  const isCurrent = atis.suggestion === currentRwy;
+  return (
+    <span
+      className={"gw-atisbadge" + (isCurrent ? " match" : "")}
+      title={`ATIS ${atis.letter ? atis.letter + " · " : ""}reports RWY ${atis.raw} active`}
+    >
+      <Radio size={9} /> ATIS {atis.raw}
+    </span>
   );
 }
 
@@ -287,7 +326,7 @@ function Sidebar({ section, setSection }) {
     <aside className="gw-sidebar">
       <div className="gw-sidebar-brand">
         <Navigation2 size={20} strokeWidth={2.4} className="gw-brand-mark" />
-        <span className="gw-brand-word">GATEWAY</span>
+        <span className="gw-brand-word">24GRAPH</span>
       </div>
       <nav className="gw-sidebar-nav">
         {NAV_SECTIONS.map((item) => {
@@ -498,7 +537,12 @@ function SchematicMap({ nodes, currentIdx, showChartNote }) {
                   stroke={color} strokeWidth={2}
                 />
                 <text x={n.x + 9} y={n.y - 8} className="gw-map-label">{n.name}</text>
-                {showAlt && n.alt && <text x={n.x + 9} y={n.y + 14} className="gw-map-alt">{n.alt}</text>}
+                {showAlt && n.trackIn != null && (
+                  <text x={n.x + 9} y={n.y + 13} className="gw-map-track">{String(n.trackIn).padStart(3, "0")}°</text>
+                )}
+                {showAlt && n.alt && (
+                  <text x={n.x + 9} y={n.y + (n.trackIn != null ? 25 : 13)} className="gw-map-alt">{n.alt}</text>
+                )}
               </g>
             );
           })}
@@ -578,7 +622,7 @@ function SettingsPage({ robloxName, setRobloxName, backendUrl, setBackendUrl, li
       <div className="gw-panel-title">LIVE TRACKING &amp; SAVED ROUTES</div>
       <p className="gw-settings-blurb">
         The browser can't reach 24data directly, so LIVE mode polls your own backend relay instead.
-        Run <code>gateway-backend/server.js</code> and point this at it. Your username also scopes
+        Run <code>24graph-backend/server.js</code> and point this at it. Your username also scopes
         Save/Load on the Flight Plan page — routes are saved per username, not per browser.
       </p>
       <Field label="ROBLOX USERNAME">
@@ -600,6 +644,7 @@ function FlightPlanPage(props) {
   const {
     adep, setAdep, adepRwy, setAdepRwy, sidIdx, setSidIdx, sidTransIdx, setSidTransIdx,
     enrouteFixes, setEnrouteFixes, ades, setAdes, adesRwy, setAdesRwy, starIdx, setStarIdx, starTransIdx, setStarTransIdx,
+    adepAtis, adesAtis,
     built, handleBuild, availableSids, availableStars,
     mode, setMode, simPlaying, setSimPlaying, simIdx, setSimIdx, currentIdx, currentNode, nextNode,
     liveStatus, liveAircraft,
@@ -636,8 +681,8 @@ function FlightPlanPage(props) {
             <Field label="DEPARTURE">
               <Select value={adep} onChange={setAdep} options={AIRPORTS.map((a) => ({ value: a.icao, label: `${a.icao}${a.name ? " · " + a.name : ""}` }))} placeholder="Airport" />
             </Field>
-            <Field label="RWY">
-              <Select value={adepRwy} onChange={setAdepRwy} options={runwaysFor(adep).map((r) => ({ value: r, label: r }))} placeholder="—" disabled={runwaysFor(adep).length === 0} />
+            <Field label="RWY" extra={<AtisBadge atis={adepAtis} currentRwy={adepRwy} />}>
+              <Select value={adepRwy} onChange={setAdepRwy} options={runwaysFor(adep, "departure").map((r) => ({ value: r, label: r }))} placeholder="—" disabled={runwaysFor(adep, "departure").length === 0} />
             </Field>
             {RFD_DATA.sids[adep] ? (
               <>
@@ -667,8 +712,8 @@ function FlightPlanPage(props) {
             <Field label="ARRIVAL">
               <Select value={ades} onChange={setAdes} options={AIRPORTS.map((a) => ({ value: a.icao, label: `${a.icao}${a.name ? " · " + a.name : ""}` }))} placeholder="Airport" />
             </Field>
-            <Field label="RWY">
-              <Select value={adesRwy} onChange={setAdesRwy} options={runwaysFor(ades).map((r) => ({ value: r, label: r }))} placeholder="—" disabled={runwaysFor(ades).length === 0} />
+            <Field label="RWY" extra={<AtisBadge atis={adesAtis} currentRwy={adesRwy} />}>
+              <Select value={adesRwy} onChange={setAdesRwy} options={runwaysFor(ades, "arrival").map((r) => ({ value: r, label: r }))} placeholder="—" disabled={runwaysFor(ades, "arrival").length === 0} />
             </Field>
             {RFD_DATA.stars[ades] ? (
               <>
@@ -743,7 +788,7 @@ function FlightPlanPage(props) {
 
 // ---------- main app ----------
 
-export default function Gateway() {
+export default function Graph24() {
   const [section, setSection] = useState("flightplan");
 
   const [adep, setAdep] = useState("IRFD");
@@ -753,6 +798,8 @@ export default function Gateway() {
   const [enrouteFixes, setEnrouteFixes] = useState([]);
   const [ades, setAdes] = useState("IRFD");
   const [adesRwy, setAdesRwy] = useState("07L");
+  const [adepAtis, setAdepAtis] = useState(null); // { runways: [...], letter, raw }
+  const [adesAtis, setAdesAtis] = useState(null);
   const [starIdx, setStarIdx] = useState(null);
   const [starTransIdx, setStarTransIdx] = useState(null);
   const [built, setBuilt] = useState(null);
@@ -770,8 +817,63 @@ export default function Gateway() {
   const availableSids = useMemo(() => sidsForRunway(adep, adepRwy), [adep, adepRwy]);
   const availableStars = useMemo(() => (RFD_DATA.stars[ades] ? starsForRunway(ades, adesRwy) : []), [ades, adesRwy]);
 
-  useEffect(() => { const r = runwaysFor(adep); setAdepRwy(r[0] || null); setSidIdx(null); setSidTransIdx(null); }, [adep]);
-  useEffect(() => { const r = runwaysFor(ades); setAdesRwy(r[0] || null); setStarIdx(null); setStarTransIdx(null); }, [ades]);
+  useEffect(() => { const r = runwaysFor(adep, "departure"); setAdepRwy(r[0] || null); setSidIdx(null); setSidTransIdx(null); }, [adep]);
+  useEffect(() => { const r = runwaysFor(ades, "arrival"); setAdesRwy(r[0] || null); setStarIdx(null); setStarTransIdx(null); }, [ades]);
+
+  // ATIS-driven runway suggestion. Fetches on airport change and refreshes
+  // periodically; only force-selects the runway ONCE per airport change so
+  // it doesn't fight a manual override on later refreshes.
+  const atisAppliedRef = useRef({ dep: null, arr: null });
+  useEffect(() => { atisAppliedRef.current.dep = null; }, [adep]);
+  useEffect(() => { atisAppliedRef.current.arr = null; }, [ades]);
+
+  useEffect(() => {
+    if (!adep || !backendUrl) { setAdepAtis(null); return; }
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const res = await fetch(`${backendUrl.replace(/\/$/, "")}/atis/${adep}`);
+        if (!res.ok) throw new Error("no atis");
+        const data = await res.json();
+        const parsed = parseAtisRunways(data.content || (data.lines || []).join("\n"));
+        if (cancelled || !parsed) return;
+        const known = runwaysFor(adep, "departure");
+        const suggestion = parsed.dep.find((r) => known.includes(r)) || null;
+        setAdepAtis({ letter: data.letter, raw: parsed.dep.join("/"), suggestion });
+        if (suggestion && atisAppliedRef.current.dep !== adep) {
+          setAdepRwy(suggestion);
+          atisAppliedRef.current.dep = adep;
+        }
+      } catch (e) { if (!cancelled) setAdepAtis(null); }
+    };
+    poll();
+    const id = setInterval(poll, 30000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [adep, backendUrl]);
+
+  useEffect(() => {
+    if (!ades || !backendUrl) { setAdesAtis(null); return; }
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const res = await fetch(`${backendUrl.replace(/\/$/, "")}/atis/${ades}`);
+        if (!res.ok) throw new Error("no atis");
+        const data = await res.json();
+        const parsed = parseAtisRunways(data.content || (data.lines || []).join("\n"));
+        if (cancelled || !parsed) return;
+        const known = runwaysFor(ades, "arrival");
+        const suggestion = parsed.arr.find((r) => known.includes(r)) || null;
+        setAdesAtis({ letter: data.letter, raw: parsed.arr.join("/"), suggestion });
+        if (suggestion && atisAppliedRef.current.arr !== ades) {
+          setAdesRwy(suggestion);
+          atisAppliedRef.current.arr = ades;
+        }
+      } catch (e) { if (!cancelled) setAdesAtis(null); }
+    };
+    poll();
+    const id = setInterval(poll, 30000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, [ades, backendUrl]);
   useEffect(() => { setSidIdx(null); setSidTransIdx(null); }, [adepRwy]);
   useEffect(() => { setStarIdx(null); setStarTransIdx(null); }, [adesRwy]);
 
@@ -906,6 +1008,7 @@ export default function Gateway() {
               enrouteFixes={enrouteFixes} setEnrouteFixes={setEnrouteFixes}
               ades={ades} setAdes={setAdes} adesRwy={adesRwy} setAdesRwy={setAdesRwy}
               starIdx={starIdx} setStarIdx={setStarIdx} starTransIdx={starTransIdx} setStarTransIdx={setStarTransIdx}
+              adepAtis={adepAtis} adesAtis={adesAtis}
               built={built} handleBuild={handleBuild} availableSids={availableSids} availableStars={availableStars}
               mode={mode} setMode={setMode} simPlaying={simPlaying} setSimPlaying={setSimPlaying}
               simIdx={simIdx} setSimIdx={setSimIdx} currentIdx={currentIdx} currentNode={currentNode} nextNode={nextNode}
@@ -1044,7 +1147,10 @@ const CSS = `
 @media (max-width: 900px) { .gw-setup-grid { grid-template-columns: repeat(2, 1fr); } .gw-span2 { grid-column: span 2; } }
 
 .gw-field { display: flex; flex-direction: column; }
-.gw-field-label { font-size: 10px; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 5px; font-family: 'IBM Plex Mono', monospace; }
+.gw-field-labelrow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.gw-field-label { font-size: 10px; letter-spacing: 0.06em; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; margin-bottom: 0; }
+.gw-atisbadge { display: inline-flex; align-items: center; gap: 3px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.03em; color: var(--text-dim); background: var(--panel-2); border: 1px solid var(--border); padding: 1px 6px; border-radius: 999px; cursor: help; }
+.gw-atisbadge.match { color: var(--green); border-color: var(--green); background: var(--green-dim); }
 .gw-select-wrap { position: relative; }
 .gw-select { width: 100%; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; padding: 8px 26px 8px 9px; border-radius: 6px; appearance: none; cursor: pointer; }
 .gw-select:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -1103,6 +1209,7 @@ const CSS = `
 .gw-map-empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 12.5px; min-height: 260px; }
 .gw-map-svg { width: 100%; min-height: 340px; flex: 1; background: #0D111A; border-radius: 8px; border: 1px solid var(--border); }
 .gw-map-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; fill: var(--text); }
+.gw-map-track { font-family: 'IBM Plex Mono', monospace; font-size: 7.5px; fill: var(--cyan); }
 .gw-map-alt { font-family: 'IBM Plex Mono', monospace; font-size: 7.5px; fill: var(--text-dim); }
 .gw-map-caption { font-size: 10.5px; color: var(--text-dim); margin-top: 8px; text-align: center; }
 

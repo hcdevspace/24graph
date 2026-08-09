@@ -360,9 +360,19 @@ function Sidebar({ section, setSection }) {
   );
 }
 
-function TopBar() {
+function TopBar({ mode, liveStatus, liveStatusMsg, onStatusClick }) {
+  const stateColor = mode !== "live" ? "neutral" : liveStatus === "live" ? "live" : liveStatus === "unreachable" || liveStatus === "error" ? "bad" : liveStatus === "no_config" ? "neutral" : "warn";
+  const label = mode !== "live" ? "SIM" : liveStatus.replace("_", " ").toUpperCase();
   return (
     <header className="gw-topbar">
+      <button
+        className={"gw-statuspill gw-statuspill-" + stateColor + " gw-topbar-statuspill"}
+        onClick={onStatusClick}
+        title={mode === "live" ? liveStatusMsg : "In SIM mode — click to open Settings and connect LIVE"}
+      >
+        <span className="gw-statuspill-dot" />
+        {label}
+      </button>
       <div className="gw-topbar-spacer" />
       <div className="gw-topbar-right">
         <span className="gw-network-pill">PTFS ATC24 <ChevronDown size={13} /></span>
@@ -562,7 +572,7 @@ function SchematicMap({ nodes, currentIdx, showChartNote }) {
 
 // ---------- summary cards (only real data - no fabricated numbers) ----------
 
-function SummaryCards({ cfg, built, mode, simPlaying, liveStatus, liveAircraft, currentNode, nextNode }) {
+function SummaryCards({ cfg, built, mode, simPlaying, liveStatus, liveStatusMsg, liveAircraft, currentNode, nextNode }) {
   const phaseCounts = useMemo(() => {
     if (!built) return {};
     const c = {};
@@ -594,7 +604,12 @@ function SummaryCards({ cfg, built, mode, simPlaying, liveStatus, liveAircraft, 
         <div className="gw-card-row"><span>Mode</span><span>{mode === "live" ? "LIVE" : "SIMULATE"}{mode === "sim" && simPlaying ? " · playing" : ""}</span></div>
         <div className="gw-card-row"><span>At</span><span>{currentNode ? currentNode.name : "—"}</span></div>
         <div className="gw-card-row"><span>Next</span><span>{nextNode ? nextNode.name : "—"}</span></div>
-        {mode === "live" && <div className="gw-card-row"><span>Link</span><span className={liveStatus === "live" ? "gw-live-ok" : ""}>{liveStatus.toUpperCase()}</span></div>}
+        {mode === "live" && (
+          <div className="gw-card-row gw-card-row-wrap">
+            <span>Link</span>
+            <span className={liveStatus === "live" ? "gw-live-ok" : liveStatus === "unreachable" || liveStatus === "error" ? "gw-live-bad" : ""}>{liveStatusMsg}</span>
+          </div>
+        )}
       </div>
 
       <div className="gw-card">
@@ -616,7 +631,8 @@ function SummaryCards({ cfg, built, mode, simPlaying, liveStatus, liveAircraft, 
 
 // ---------- settings page ----------
 
-function SettingsPage({ robloxName, setRobloxName, backendUrl, setBackendUrl, liveStatus }) {
+function SettingsPage({ robloxName, setRobloxName, backendUrl, setBackendUrl, liveStatus, liveStatusMsg, mode, setMode }) {
+  const stateColor = liveStatus === "live" ? "live" : liveStatus === "unreachable" || liveStatus === "error" ? "bad" : liveStatus === "idle" || liveStatus === "no_config" ? "neutral" : "warn";
   return (
     <div className="gw-settings">
       <div className="gw-panel-title">LIVE TRACKING &amp; SAVED ROUTES</div>
@@ -631,9 +647,18 @@ function SettingsPage({ robloxName, setRobloxName, backendUrl, setBackendUrl, li
       <Field label="BACKEND URL">
         <input className="gw-input" placeholder="https://two4graph.onrender.com" value={backendUrl} onChange={(e) => setBackendUrl(e.target.value)} />
       </Field>
-      <div className="gw-settings-status">
-        Status: <span className={liveStatus === "live" ? "gw-live-ok" : ""}>{liveStatus.toUpperCase()}</span>
+      <div className="gw-settings-status-row">
+        <div className={"gw-statuspill gw-statuspill-" + stateColor}>
+          <span className="gw-statuspill-dot" />
+          {mode === "live" ? liveStatus.replace("_", " ").toUpperCase() : "SIM MODE"}
+        </div>
+        {mode !== "live" && (
+          <button className="gw-btn-outline" onClick={() => setMode("live")}>Switch to LIVE</button>
+        )}
       </div>
+      <p className="gw-settings-status-detail">
+        {mode === "live" ? liveStatusMsg : "You're in SIM mode — Settings won't attempt a live connection until you switch to LIVE."}
+      </p>
     </div>
   );
 }
@@ -647,7 +672,7 @@ function FlightPlanPage(props) {
     adepAtis, adesAtis,
     built, handleBuild, availableSids, availableStars,
     mode, setMode, simPlaying, setSimPlaying, simIdx, setSimIdx, currentIdx, currentNode, nextNode,
-    liveStatus, liveAircraft,
+    liveStatus, liveStatusMsg, liveAircraft,
     onReverse, onClear, onSave, onShare, savedRoutes, onLoad,
     cfgForCards,
   } = props;
@@ -753,18 +778,16 @@ function FlightPlanPage(props) {
         <div className="gw-panel gw-split-left">
           <div className="gw-panel-title-row">
             <span className="gw-panel-title">WAYPOINTS</span>
-            {built && (
-              <div className="gw-simctl">
-                <button className="gw-modechip" onClick={() => setMode("sim")} data-active={mode === "sim"}>SIM</button>
-                <button className="gw-modechip" onClick={() => setMode("live")} data-active={mode === "live"}>LIVE</button>
-                {mode === "sim" && (
-                  <>
-                    <button className="gw-iconbtn" onClick={() => setSimPlaying((p) => !p)}>{simPlaying ? <Pause size={13} /> : <Play size={13} />}</button>
-                    <button className="gw-iconbtn" onClick={() => { setSimIdx(0); setSimPlaying(false); }}><RotateCcw size={13} /></button>
-                  </>
-                )}
-              </div>
-            )}
+            <div className="gw-simctl">
+              <button className="gw-modechip" onClick={() => setMode("sim")} data-active={mode === "sim"}>SIM</button>
+              <button className="gw-modechip" onClick={() => setMode("live")} data-active={mode === "live"}>LIVE</button>
+              {mode === "sim" && built && (
+                <>
+                  <button className="gw-iconbtn" onClick={() => setSimPlaying((p) => !p)}>{simPlaying ? <Pause size={13} /> : <Play size={13} />}</button>
+                  <button className="gw-iconbtn" onClick={() => { setSimIdx(0); setSimPlaying(false); }}><RotateCcw size={13} /></button>
+                </>
+              )}
+            </div>
           </div>
           <WaypointTable nodes={built ? built.nodes : []} currentIdx={currentIdx} />
           <div className="gw-routestring">
@@ -779,7 +802,7 @@ function FlightPlanPage(props) {
 
       <SummaryCards
         cfg={cfgForCards} built={built} mode={mode} simPlaying={simPlaying}
-        liveStatus={liveStatus} liveAircraft={liveAircraft}
+        liveStatus={liveStatus} liveStatusMsg={liveStatusMsg} liveAircraft={liveAircraft}
         currentNode={currentNode} nextNode={nextNode}
       />
     </>
@@ -810,6 +833,7 @@ export default function Graph24() {
   const [robloxName, setRobloxName] = useState("");
   const [backendUrl, setBackendUrl] = useState("https://two4graph.onrender.com");
   const [liveStatus, setLiveStatus] = useState("idle");
+  const [liveStatusMsg, setLiveStatusMsg] = useState("Switch to LIVE to connect.");
   const [liveAircraft, setLiveAircraft] = useState(null);
   const [savedRoutes, setSavedRoutes] = useState([]);
   const [toast, setToast] = useState(null);
@@ -960,17 +984,57 @@ export default function Graph24() {
   }, [simPlaying, built]);
 
   useEffect(() => {
-    if (mode !== "live" || !robloxName || !backendUrl) return;
+    if (mode !== "live") {
+      setLiveStatus("idle");
+      setLiveStatusMsg("Switch to LIVE to connect.");
+      return;
+    }
+    if (!robloxName || !backendUrl) {
+      setLiveStatus("no_config");
+      setLiveStatusMsg(!robloxName ? "Set your Roblox username in Settings." : "Set your backend URL in Settings.");
+      return;
+    }
     let cancelled = false;
     setLiveStatus("connecting");
+    setLiveStatusMsg("Connecting to backend…");
     const poll = async () => {
+      let res;
       try {
-        const res = await fetch(`${backendUrl.replace(/\/$/, "")}/aircraft/${encodeURIComponent(robloxName)}`, { mode: "cors" });
-        if (!res.ok) throw new Error("not found");
-        const data = await res.json();
-        if (cancelled) return;
-        setLiveAircraft(data); setLiveStatus("live");
-      } catch (e) { if (!cancelled) setLiveStatus("error"); }
+        res = await fetch(`${backendUrl.replace(/\/$/, "")}/aircraft/${encodeURIComponent(robloxName)}`, { mode: "cors" });
+      } catch (e) {
+        // fetch itself threw - network failure, CORS block, backend down, wrong URL, etc.
+        if (!cancelled) {
+          setLiveStatus("unreachable");
+          setLiveStatusMsg("Can't reach the backend — check the URL in Settings, that it's running, and CORS is allowing this origin.");
+          setLiveAircraft(null);
+        }
+        return;
+      }
+      if (cancelled) return;
+      if (res.status === 404) {
+        let body = {};
+        try { body = await res.json(); } catch (e) { /* ignore unparsable body */ }
+        const stale = (body.error || "").includes("stale");
+        setLiveStatus(stale ? "stale" : "not_flying");
+        setLiveStatusMsg(
+          stale
+            ? `Found "${robloxName}", but no recent position update — still in the air?`
+            : `Backend's reachable, but can't find "${robloxName}" currently flying.`
+        );
+        setLiveAircraft(null);
+        return;
+      }
+      if (!res.ok) {
+        setLiveStatus("error");
+        setLiveStatusMsg(`Backend returned an unexpected error (HTTP ${res.status}).`);
+        setLiveAircraft(null);
+        return;
+      }
+      const data = await res.json();
+      if (cancelled) return;
+      setLiveAircraft(data);
+      setLiveStatus("live");
+      setLiveStatusMsg(`Tracking ${data.callsign || robloxName}.`);
     };
     poll();
     const id = setInterval(poll, 3000);
@@ -999,7 +1063,7 @@ export default function Graph24() {
       <style>{CSS}</style>
       <Sidebar section={section} setSection={setSection} />
       <div className="gw-main">
-        <TopBar />
+        <TopBar mode={mode} liveStatus={liveStatus} liveStatusMsg={liveStatusMsg} onStatusClick={() => setSection("settings")} />
         <div className="gw-content">
           {section === "flightplan" && (
             <FlightPlanPage
@@ -1012,14 +1076,17 @@ export default function Graph24() {
               built={built} handleBuild={handleBuild} availableSids={availableSids} availableStars={availableStars}
               mode={mode} setMode={setMode} simPlaying={simPlaying} setSimPlaying={setSimPlaying}
               simIdx={simIdx} setSimIdx={setSimIdx} currentIdx={currentIdx} currentNode={currentNode} nextNode={nextNode}
-              liveStatus={liveStatus} liveAircraft={liveAircraft}
+              liveStatus={liveStatus} liveStatusMsg={liveStatusMsg} liveAircraft={liveAircraft}
               onReverse={handleReverse} onClear={handleClear} onSave={handleSave} onShare={handleShare}
               savedRoutes={savedRoutes} onLoad={handleLoad}
               cfgForCards={cfgForCards}
             />
           )}
           {section === "settings" && (
-            <SettingsPage robloxName={robloxName} setRobloxName={setRobloxName} backendUrl={backendUrl} setBackendUrl={setBackendUrl} liveStatus={liveStatus} />
+            <SettingsPage
+              robloxName={robloxName} setRobloxName={setRobloxName} backendUrl={backendUrl} setBackendUrl={setBackendUrl}
+              liveStatus={liveStatus} liveStatusMsg={liveStatusMsg} mode={mode} setMode={setMode}
+            />
           )}
           {section !== "flightplan" && section !== "settings" && (
             <PlaceholderPage
@@ -1224,6 +1291,23 @@ const CSS = `
 .gw-card-row span:last-child { font-family: 'IBM Plex Mono', monospace; color: var(--text); }
 .gw-card-footnote { font-size: 10.5px; color: var(--text-dim); line-height: 1.5; margin-top: 8px; }
 .gw-live-ok { color: var(--green) !important; }
+.gw-live-bad { color: var(--red) !important; }
+.gw-card-row-wrap span:last-child { white-space: normal; text-align: right; max-width: 62%; }
+
+/* ---- status pill (used in TopBar + Settings) ---- */
+.gw-statuspill { display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.05em; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--border); background: var(--panel-2); cursor: pointer; }
+.gw-statuspill-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-dim); flex-shrink: 0; }
+.gw-statuspill-live { color: var(--green); border-color: var(--green); background: var(--green-dim); }
+.gw-statuspill-live .gw-statuspill-dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+.gw-statuspill-bad { color: var(--red); border-color: var(--red); background: rgba(239,68,68,0.12); }
+.gw-statuspill-bad .gw-statuspill-dot { background: var(--red); }
+.gw-statuspill-warn { color: var(--amber); border-color: var(--amber); background: rgba(242,169,59,0.12); }
+.gw-statuspill-warn .gw-statuspill-dot { background: var(--amber); }
+.gw-statuspill-neutral { color: var(--text-dim); }
+.gw-topbar-statuspill { border: none; }
+
+.gw-settings-status-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.gw-settings-status-detail { font-size: 12px; color: var(--text-dim); margin-top: 8px; line-height: 1.5; }
 
 /* ---- settings ---- */
 .gw-settings { max-width: 460px; }

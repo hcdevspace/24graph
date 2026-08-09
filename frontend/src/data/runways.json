@@ -1,22 +1,15 @@
 {
-  "IRFD": [
-    "07L",
-    "07C",
-    "07R",
-    "25L",
-    "25C",
-    "25R"
-  ],
-  "ITKO": [
-    "02",
-    "13",
-    "20",
-    "31"
-  ],
-  "IPPH": [
-    "11",
-    "15",
-    "29",
-    "33"
-  ]
+  "IRFD": {
+    "departure": ["07L", "07C", "07R", "25L", "25C", "25R"],
+    "arrival": ["07L", "07C", "07R", "25L", "25C", "25R"]
+  },
+  "ITKO": {
+    "departure": ["02", "13", "20", "31"],
+    "arrival": ["13", "20", "31"],
+    "_note": "RWY02 excluded from arrival - restricted, never actually used for landing"
+  },
+  "IPPH": {
+    "departure": ["11", "15", "29", "33"],
+    "arrival": ["11", "15", "29", "33"]
+  }
 }

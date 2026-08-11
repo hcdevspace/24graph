@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import {
-  Plane, Radio, ChevronRight, ChevronDown, X, Play, Pause, RotateCcw, Wifi, WifiOff, Navigation2,
+  Radio, ChevronRight, ChevronDown, X, Play, Pause, RotateCcw, Navigation2,
   Route, MapPin, Waypoints, Signpost, Layers, Map as MapIcon, CloudSun, Gauge, Fuel, FileText,
-  Settings as SettingsIcon, Sun, Moon, User, Star, Edit3, Share2, ArrowLeftRight, Trash2, Plus,
-  ZoomIn, ZoomOut, Maximize2, ChevronsUpDown, Save, FolderOpen, Check,
+  Settings as SettingsIcon, Moon, User, Star, Share2, ArrowLeftRight, Trash2,
+  ZoomIn, ZoomOut, Maximize2, ChevronsUpDown, Save, FolderOpen,
 } from "lucide-react";
 
 import RFD_DATA from "./data/index.js";
@@ -161,20 +161,41 @@ function buildRoute(cfg) {
 }
 
 // find which leg (index of the *arriving* node) best matches a live heading/altitude
+// Extracts a target altitude number out of chart alt-constraint strings like
+// "at or above 3000", "2500 (hard altitude)", "1500" - first 3-5 digit run wins.
+function parseAltNumber(altStr) {
+  if (!altStr) return null;
+  const m = altStr.match(/(\d{3,5})/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+// Matches live heading (primary signal) against each leg's charted track,
+// then uses altitude as a tiebreaker among legs with near-identical headings
+// (e.g. parallel SID transitions that briefly share a track). True
+// position-based matching isn't possible yet - we don't have real waypoint
+// coordinates, only the schematic layout below, which is not real geography
+// (see computeSchematicPositions). This is the best signal available without it.
 function matchCurrentLegIndex(nodes, heading, altitude) {
-  let best = -1;
-  let bestScore = Infinity;
+  const candidates = [];
   for (let i = 1; i < nodes.length; i++) {
     const n = nodes[i];
     if (n.trackIn == null) continue;
-    let diff = Math.abs(((heading - n.trackIn + 540) % 360) - 180);
-    best === -1 && (bestScore = diff);
-    if (diff <= bestScore) {
-      bestScore = diff;
-      best = i;
+    const headingDiff = Math.abs(((heading - n.trackIn + 540) % 360) - 180);
+    candidates.push({ i, headingDiff, altTarget: parseAltNumber(n.alt) });
+  }
+  if (!candidates.length) return Math.min(1, nodes.length - 1);
+
+  const bestHeadingDiff = Math.min(...candidates.map((c) => c.headingDiff));
+  const tied = candidates.filter((c) => c.headingDiff <= bestHeadingDiff + 15); // within 15° = ambiguous
+
+  if (tied.length > 1 && altitude != null) {
+    const withAlt = tied.filter((c) => c.altTarget != null);
+    if (withAlt.length) {
+      withAlt.sort((a, b) => Math.abs(altitude - a.altTarget) - Math.abs(altitude - b.altTarget));
+      return withAlt[0].i;
     }
   }
-  return best === -1 ? Math.min(1, nodes.length - 1) : best;
+  return tied[0].i;
 }
 
 const PHASE_COLOR = {
@@ -830,8 +851,14 @@ export default function Graph24() {
   const [mode, setMode] = useState("sim");
   const [simPlaying, setSimPlaying] = useState(false);
   const [simIdx, setSimIdx] = useState(0);
-  const [robloxName, setRobloxName] = useState("");
-  const [backendUrl, setBackendUrl] = useState("https://two4graph.onrender.com");
+  const [robloxName, setRobloxName] = useState(() => {
+    try { return localStorage.getItem("24graph:robloxName") || ""; } catch (e) { return ""; }
+  });
+  const [backendUrl, setBackendUrl] = useState(() => {
+    try { return localStorage.getItem("24graph:backendUrl") || "https://two4graph.onrender.com"; } catch (e) { return "https://two4graph.onrender.com"; }
+  });
+  useEffect(() => { try { localStorage.setItem("24graph:robloxName", robloxName); } catch (e) { /* localStorage unavailable, skip */ } }, [robloxName]);
+  useEffect(() => { try { localStorage.setItem("24graph:backendUrl", backendUrl); } catch (e) { /* localStorage unavailable, skip */ } }, [backendUrl]);
   const [liveStatus, setLiveStatus] = useState("idle");
   const [liveStatusMsg, setLiveStatusMsg] = useState("Switch to LIVE to connect.");
   const [liveAircraft, setLiveAircraft] = useState(null);
@@ -841,8 +868,35 @@ export default function Graph24() {
   const availableSids = useMemo(() => sidsForRunway(adep, adepRwy), [adep, adepRwy]);
   const availableStars = useMemo(() => (RFD_DATA.stars[ades] ? starsForRunway(ades, adesRwy) : []), [ades, adesRwy]);
 
-  useEffect(() => { const r = runwaysFor(adep, "departure"); setAdepRwy(r[0] || null); setSidIdx(null); setSidTransIdx(null); }, [adep]);
-  useEffect(() => { const r = runwaysFor(ades, "arrival"); setAdesRwy(r[0] || null); setStarIdx(null); setStarTransIdx(null); }, [ades]);
+  // Deliberately NOT useEffects keyed on [adep]/[ades]/[adepRwy]/[adesRwy] - that
+  // was the bug. An effect fires on ANY change to that value, including ones made
+  // by handleLoad/handleReverse restoring a specific saved config, silently
+  // stomping the restored SID/runway right after it was set. These handlers only
+  // run when the user actually picks something from the dropdown themselves.
+  const handleAdepChange = (newAdep) => {
+    setAdep(newAdep);
+    const r = runwaysFor(newAdep, "departure");
+    setAdepRwy(r[0] || null);
+    setSidIdx(null);
+    setSidTransIdx(null);
+  };
+  const handleAdesChange = (newAdes) => {
+    setAdes(newAdes);
+    const r = runwaysFor(newAdes, "arrival");
+    setAdesRwy(r[0] || null);
+    setStarIdx(null);
+    setStarTransIdx(null);
+  };
+  const handleAdepRwyChange = (newRwy) => {
+    setAdepRwy(newRwy);
+    setSidIdx(null);
+    setSidTransIdx(null);
+  };
+  const handleAdesRwyChange = (newRwy) => {
+    setAdesRwy(newRwy);
+    setStarIdx(null);
+    setStarTransIdx(null);
+  };
 
   // ATIS-driven runway suggestion. Fetches on airport change and refreshes
   // periodically; only force-selects the runway ONCE per airport change so
@@ -898,8 +952,9 @@ export default function Graph24() {
     const id = setInterval(poll, 30000);
     return () => { cancelled = true; clearInterval(id); };
   }, [ades, backendUrl]);
-  useEffect(() => { setSidIdx(null); setSidTransIdx(null); }, [adepRwy]);
-  useEffect(() => { setStarIdx(null); setStarTransIdx(null); }, [adesRwy]);
+  // (sidIdx/starIdx reset on runway change is now handled explicitly by
+  // handleAdepRwyChange/handleAdesRwyChange above, not as a blanket effect -
+  // same fix as the airport-change handlers, one level deeper.)
 
   // load saved-route list from the backend whenever we know who's asking
   const refreshSavedRoutes = useCallback(async () => {
@@ -1067,10 +1122,10 @@ export default function Graph24() {
         <div className="gw-content">
           {section === "flightplan" && (
             <FlightPlanPage
-              adep={adep} setAdep={setAdep} adepRwy={adepRwy} setAdepRwy={setAdepRwy}
+              adep={adep} setAdep={handleAdepChange} adepRwy={adepRwy} setAdepRwy={handleAdepRwyChange}
               sidIdx={sidIdx} setSidIdx={setSidIdx} sidTransIdx={sidTransIdx} setSidTransIdx={setSidTransIdx}
               enrouteFixes={enrouteFixes} setEnrouteFixes={setEnrouteFixes}
-              ades={ades} setAdes={setAdes} adesRwy={adesRwy} setAdesRwy={setAdesRwy}
+              ades={ades} setAdes={handleAdesChange} adesRwy={adesRwy} setAdesRwy={handleAdesRwyChange}
               starIdx={starIdx} setStarIdx={setStarIdx} starTransIdx={starTransIdx} setStarTransIdx={setStarTransIdx}
               adepAtis={adepAtis} adesAtis={adesAtis}
               built={built} handleBuild={handleBuild} availableSids={availableSids} availableStars={availableStars}

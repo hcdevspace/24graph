@@ -49,12 +49,16 @@ function ingestAtisList(list) {
 }
 
 // ---- WebSocket connection (primary, near-real-time) ----
+let lastWsMessageAt = 0;
+const WS_STALE_MS = 10000; // no WS message in 10s (~10x its normal ~1s cadence) = treat as stale
+
 function connectWs() {
   // IMPORTANT: do not set an Origin header here - 24data requires it be absent.
   const ws = new WebSocket(WSS_URL);
 
   ws.on("open", () => console.log("[24data] websocket connected"));
   ws.on("message", (raw) => {
+    lastWsMessageAt = Date.now();
     try {
       const msg = JSON.parse(raw.toString());
       if (msg.t === "ACFT_DATA") ingestAircraftData(msg.d, false);
@@ -73,15 +77,22 @@ function connectWs() {
 }
 connectWs();
 
-// ---- REST poll (fallback / redundancy, matches suggested 20 req/min rate) ----
+// ---- REST poll: TRUE fallback now, not always-on redundancy. Only actually
+// hits the network when the WS has gone quiet for a while - staleness-based
+// rather than raw ws.readyState, since a socket can stay "open" while
+// silently not delivering messages. Still checks every 3s so it reacts fast
+// once it IS needed. ----
 async function pollRest() {
-  try {
-    const res = await fetch(`${REST_BASE}/acft-data`);
-    if (res.ok) ingestAircraftData(await res.json(), false);
-  } catch (e) {
-    console.error("[24data] rest poll failed", e.message);
+  const wsStale = Date.now() - lastWsMessageAt > WS_STALE_MS;
+  if (wsStale) {
+    try {
+      const res = await fetch(`${REST_BASE}/acft-data`);
+      if (res.ok) ingestAircraftData(await res.json(), false);
+    } catch (e) {
+      console.error("[24data] rest poll failed", e.message);
+    }
   }
-  setTimeout(pollRest, 3000); // every 3s = 20 req/min, matches 24data's suggested rate
+  setTimeout(pollRest, 3000);
 }
 pollRest();
 
@@ -102,10 +113,13 @@ pollAtis();
 
 // ---- HTTP API for the 24graph frontend ----
 const app = express();
-const ALLOWED_ORIGINS = [
-  "https://24graph.vercel.app",
-  "http://localhost:5173", // Vite dev server, for local testing
-];
+// ALLOWED_ORIGINS env var: comma-separated list, e.g.
+//   ALLOWED_ORIGINS=https://24graph.vercel.app,http://localhost:5173
+// Falls back to the current known origins if the env var isn't set, so local
+// `node server.js` still works without any extra setup.
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim()).filter(Boolean)
+  : ["https://24graph.vercel.app", "http://localhost:5173"];
 app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json());
 
@@ -137,13 +151,54 @@ app.get("/atis/:icao", (req, res) => {
 });
 
 app.get("/health", (req, res) => {
-  res.json({ ok: true, cachedAircraft: aircraftCache.size, trackedPlayers: playerIndex.size, cachedAtis: atisCache.size });
+  const wsAgoMs = lastWsMessageAt ? Date.now() - lastWsMessageAt : null;
+  res.json({
+    ok: true,
+    cachedAircraft: aircraftCache.size,
+    trackedPlayers: playerIndex.size,
+    cachedAtis: atisCache.size,
+    wsLastMessageMsAgo: wsAgoMs,
+    wsStale: wsAgoMs == null ? true : wsAgoMs > WS_STALE_MS,
+  });
 });
 
 // ---- saved flight plans, scoped per Roblox username ----
+const MAX_NAME_LEN = 60;
+const MAX_USER_LEN = 40;
+const MAX_ENROUTE_FIXES = 30;
+const VALID_ROUTE_KEYS = new Set(["adep", "adepRwy", "sidIdx", "sidTransIdx", "enrouteFixes", "ades", "adesRwy", "starIdx", "starTransIdx"]);
+
+function validRouteName(name) {
+  return typeof name === "string" && name.length > 0 && name.length <= MAX_NAME_LEN;
+}
+function validUsername(user) {
+  return typeof user === "string" && user.length > 0 && user.length <= MAX_USER_LEN;
+}
+function validConfig(config) {
+  if (!config || typeof config !== "object" || Array.isArray(config)) return "config must be an object";
+  for (const key of Object.keys(config)) {
+    if (!VALID_ROUTE_KEYS.has(key)) return `unexpected config key: ${key}`;
+  }
+  if (config.enrouteFixes != null) {
+    if (!Array.isArray(config.enrouteFixes)) return "enrouteFixes must be an array";
+    if (config.enrouteFixes.length > MAX_ENROUTE_FIXES) return `too many enroute fixes (max ${MAX_ENROUTE_FIXES})`;
+    if (!config.enrouteFixes.every((f) => typeof f === "string")) return "enrouteFixes must all be strings";
+  }
+  if (config.adep != null && typeof config.adep !== "string") return "adep must be a string";
+  if (config.ades != null && typeof config.ades !== "string") return "ades must be a string";
+  return null; // valid
+}
+
 app.post("/routes/:user", (req, res) => {
+  if (!validUsername(req.params.user)) {
+    return res.status(400).json({ error: `username must be 1-${MAX_USER_LEN} characters` });
+  }
   const { name, config } = req.body || {};
-  if (!name || !config) return res.status(400).json({ error: "name and config required" });
+  if (!validRouteName(name)) {
+    return res.status(400).json({ error: `route name must be 1-${MAX_NAME_LEN} characters` });
+  }
+  const configError = validConfig(config);
+  if (configError) return res.status(400).json({ error: configError });
   saveRoute(req.params.user, name, config);
   res.json({ ok: true });
 });

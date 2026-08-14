@@ -150,6 +150,10 @@ app.get("/atis/:icao", (req, res) => {
   res.json(atis);
 });
 
+app.get("/atis", (req, res) => {
+  res.json(Array.from(atisCache.values()));
+});
+
 app.get("/health", (req, res) => {
   const wsAgoMs = lastWsMessageAt ? Date.now() - lastWsMessageAt : null;
   res.json({

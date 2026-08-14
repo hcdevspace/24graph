@@ -336,7 +336,7 @@ const NAV_SECTIONS = [
   { id: "approach", label: "Approach", icon: Navigation2, active: false },
   { id: "airspace", label: "Airspace", icon: Layers, active: false },
   { id: "map", label: "Map", icon: MapIcon, active: false },
-  { id: "weather", label: "Weather", icon: CloudSun, active: false },
+  { id: "weather", label: "Weather", icon: CloudSun, active: true },
   { id: "performance", label: "Performance", icon: Gauge, active: false },
   { id: "fuel", label: "Fuel", icon: Fuel, active: false },
   { id: "documents", label: "Documents", icon: FileText, active: false },
@@ -422,7 +422,6 @@ const PLACEHOLDER_BLURBS = {
   approach: "Approach plates haven't been digitized yet - none have been uploaded so far.",
   airspace: "Sector boundaries and controller positions, pulled live from 24data's /controllers endpoint.",
   map: "A live traffic overview across all of ATC24, not tied to one flight plan. The Flight Plan page already has a route-specific map.",
-  weather: "Live ATIS per airport, pulled from 24data's /atis endpoint - the data exists, this view doesn't yet.",
   performance: "Real aircraft performance numbers aren't available for ATC24's aircraft yet, so this stays empty rather than showing made-up figures.",
   fuel: "Same as Performance - no real fuel burn data to show yet, so nothing here is invented.",
   documents: "Chart images and reference documents per airport. We have some raw chart uploads from this session; not wired into the app as viewable assets yet.",
@@ -683,6 +682,123 @@ function SettingsPage({ robloxName, setRobloxName, backendUrl, setBackendUrl, li
     </div>
   );
 }
+
+// ---------- weather page (live ATIS) ----------
+
+function WeatherCard({ airport, atis }) {
+  const [expanded, setExpanded] = useState(false);
+  const parsed = useMemo(
+    () => parseAtisRunways(atis.content || (atis.lines || []).join("\n")),
+    [atis]
+  );
+  const [, forceTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => forceTick((t) => t + 1), 5000); // keep "Xs ago" fresh
+    return () => clearInterval(id);
+  }, []);
+  const ageSec = atis.updatedAt ? Math.max(0, Math.round((Date.now() - atis.updatedAt) / 1000)) : null;
+  const rawText = atis.content || (atis.lines || []).join("\n");
+
+  return (
+    <div className="gw-weathercard">
+      <div className="gw-weathercard-head">
+        <div>
+          <div className="gw-weathercard-icao">{airport.icao}</div>
+          {airport.name && <div className="gw-weathercard-name">{airport.name}</div>}
+        </div>
+        {atis.letter && <div className="gw-weathercard-letter">{atis.letter}</div>}
+      </div>
+      {parsed ? (
+        <div className="gw-weathercard-rwy">
+          <span><span className="gw-weathercard-rwylabel">DEP</span> {parsed.dep.join("/") || "—"}</span>
+          <span><span className="gw-weathercard-rwylabel">ARR</span> {parsed.arr.join("/") || "—"}</span>
+        </div>
+      ) : (
+        <div className="gw-weathercard-rwy gw-weathercard-rwy-unparsed">Couldn't parse DEP/ARR from this ATIS text</div>
+      )}
+      <div className="gw-weathercard-age">{ageSec != null ? `updated ${ageSec}s ago` : ""}</div>
+      <button className="gw-weathercard-toggle" onClick={() => setExpanded((s) => !s)}>
+        {expanded ? "Hide" : "Show"} full ATIS text
+      </button>
+      {expanded && <pre className="gw-weathercard-raw">{rawText}</pre>}
+    </div>
+  );
+}
+
+function WeatherPage({ backendUrl }) {
+  const [atisMap, setAtisMap] = useState({});
+  const [status, setStatus] = useState(backendUrl ? "loading" : "no_backend");
+
+  useEffect(() => {
+    if (!backendUrl) { setStatus("no_backend"); return; }
+    let cancelled = false;
+    const poll = async () => {
+      try {
+        const res = await fetch(`${backendUrl.replace(/\/$/, "")}/atis`);
+        if (!res.ok) throw new Error("bad response");
+        const list = await res.json();
+        if (cancelled) return;
+        const map = {};
+        list.forEach((a) => { if (a.airport) map[a.airport] = a; });
+        setAtisMap(map);
+        setStatus("ok");
+      } catch (e) {
+        if (!cancelled) setStatus("unreachable");
+      }
+    };
+    poll();
+    const id = setInterval(poll, 20000); // ATIS changes rarely - no need to hammer this
+    return () => { cancelled = true; clearInterval(id); };
+  }, [backendUrl]);
+
+  if (!backendUrl) {
+    return (
+      <div className="gw-placeholder">
+        <div className="gw-placeholder-icon"><CloudSun size={26} strokeWidth={1.6} /></div>
+        <div className="gw-placeholder-title">Weather</div>
+        <div className="gw-placeholder-blurb">Set a backend URL in Settings first — this page polls your relay's cached ATIS, same source the Flight Plan page's runway badges use.</div>
+      </div>
+    );
+  }
+
+  const knownWithAtis = AIRPORTS.filter((a) => atisMap[a.icao]);
+  const knownWithoutAtis = AIRPORTS.filter((a) => !atisMap[a.icao]);
+  const unknownIcaos = Object.keys(atisMap).filter((icao) => !AIRPORTS.some((a) => a.icao === icao));
+
+  return (
+    <div className="gw-weather">
+      <div className="gw-weather-header">
+        <div className="gw-panel-title">LIVE ATIS</div>
+        <div className={"gw-statuspill gw-statuspill-" + (status === "ok" ? "live" : status === "unreachable" ? "bad" : "neutral")}>
+          <span className="gw-statuspill-dot" />
+          {status === "ok" ? `${knownWithAtis.length + unknownIcaos.length} CACHED` : status.replace("_", " ").toUpperCase()}
+        </div>
+      </div>
+
+      {status === "unreachable" && (
+        <div className="gw-note">Can't reach the backend at {backendUrl}. Check Settings.</div>
+      )}
+      {status === "ok" && knownWithAtis.length === 0 && unknownIcaos.length === 0 && (
+        <div className="gw-note">Backend's reachable, but nothing's cached yet — ATIS only shows up once 24data reports it. Give it a minute, or check /health on your backend.</div>
+      )}
+
+      {(knownWithAtis.length > 0 || unknownIcaos.length > 0) && (
+        <div className="gw-weather-grid">
+          {knownWithAtis.map((a) => <WeatherCard key={a.icao} airport={a} atis={atisMap[a.icao]} />)}
+          {unknownIcaos.map((icao) => <WeatherCard key={icao} airport={{ icao, name: null }} atis={atisMap[icao]} />)}
+        </div>
+      )}
+
+      {knownWithoutAtis.length > 0 && (
+        <div className="gw-weather-nodata">
+          <div className="gw-panel-title">NO ATIS CACHED YET</div>
+          <div className="gw-weather-nodata-list">{knownWithoutAtis.map((a) => a.icao).join(" · ")}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 // ---------- flight plan page ----------
 
@@ -1143,7 +1259,8 @@ export default function Graph24() {
               liveStatus={liveStatus} liveStatusMsg={liveStatusMsg} mode={mode} setMode={setMode}
             />
           )}
-          {section !== "flightplan" && section !== "settings" && (
+          {section === "weather" && <WeatherPage backendUrl={backendUrl} />}
+          {section !== "flightplan" && section !== "settings" && section !== "weather" && (
             <PlaceholderPage
               label={NAV_SECTIONS.find((s) => s.id === section)?.label || section}
               icon={NAV_SECTIONS.find((s) => s.id === section)?.icon || FileText}
@@ -1363,6 +1480,23 @@ const CSS = `
 
 .gw-settings-status-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
 .gw-settings-status-detail { font-size: 12px; color: var(--text-dim); margin-top: 8px; line-height: 1.5; }
+
+/* ---- weather (live ATIS) ---- */
+.gw-weather-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.gw-weather-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-bottom: 20px; }
+.gw-weathercard { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+.gw-weathercard-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.gw-weathercard-icao { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 16px; color: var(--text); }
+.gw-weathercard-name { font-size: 10.5px; color: var(--text-dim); margin-top: 1px; }
+.gw-weathercard-letter { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: var(--blue); background: var(--blue-dim); border-radius: 5px; padding: 2px 8px; }
+.gw-weathercard-rwy { display: flex; gap: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text); margin-bottom: 8px; }
+.gw-weathercard-rwylabel { color: var(--text-dim); margin-right: 3px; }
+.gw-weathercard-rwy-unparsed { font-family: 'IBM Plex Sans', sans-serif; font-size: 11px; color: var(--text-dim); font-style: italic; }
+.gw-weathercard-age { font-size: 10px; color: var(--text-dim); margin-bottom: 8px; }
+.gw-weathercard-toggle { background: transparent; border: none; color: var(--blue); font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; cursor: pointer; padding: 0; }
+.gw-weathercard-raw { margin-top: 10px; padding: 10px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--text); white-space: pre-wrap; line-height: 1.5; }
+.gw-weather-nodata { padding-top: 12px; border-top: 1px solid var(--border); }
+.gw-weather-nodata-list { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); margin-top: 8px; line-height: 1.8; }
 
 /* ---- settings ---- */
 .gw-settings { max-width: 460px; }

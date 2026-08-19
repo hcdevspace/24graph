@@ -429,7 +429,7 @@ const PLACEHOLDER_BLURBS = {
 
 // ---------- route header ----------
 
-function RouteHeader({ adep, ades, adepName, adesName, onReverse, onClear, onSave, onShare, savedRoutes, onLoad }) {
+function RouteHeader({ adep, ades, adepName, adesName, onReverse, onClear, onSave, onShare, savedRoutes, onLoad, robloxName, setRobloxName }) {
   const [showLoad, setShowLoad] = useState(false);
   return (
     <div className="gw-routeheader">
@@ -443,6 +443,15 @@ function RouteHeader({ adep, ades, adepName, adesName, onReverse, onClear, onSav
         {adepName || "—"} <ChevronRight size={11} /> {adesName || "—"}
       </div>
       <div className="gw-routeheader-actions">
+        <div className="gw-usernamewrap" title="Used for Save/Load and LIVE tracking - not needed for anything else">
+          <User size={13} className="gw-usernamewrap-icon" />
+          <input
+            className="gw-username-input"
+            placeholder="Roblox username"
+            value={robloxName}
+            onChange={(e) => setRobloxName(e.target.value)}
+          />
+        </div>
         <button className="gw-btn-ghost" onClick={onReverse}><ArrowLeftRight size={13} /> Reverse</button>
         <button className="gw-btn-ghost" onClick={onClear}><Trash2 size={13} /> Clear</button>
         <div className="gw-savewrap">
@@ -463,6 +472,7 @@ function RouteHeader({ adep, ades, adepName, adesName, onReverse, onClear, onSav
       </div>
     </div>
   );
+
 }
 
 // ---------- waypoint table (honest columns - no fabricated distance/EET) ----------
@@ -642,7 +652,7 @@ function SummaryCards({ cfg, built, mode, simPlaying, liveStatus, liveStatusMsg,
             <div className="gw-card-row"><span>Ground spd</span><span>{liveAircraft.groundSpeed != null ? Math.round(liveAircraft.groundSpeed) + " kt" : "—"}</span></div>
           </>
         ) : (
-          <div className="gw-card-footnote">Connect in Settings and switch to LIVE to see your real aircraft here.</div>
+          <div className="gw-card-footnote">Enter your username above and switch to LIVE to see your real aircraft here.</div>
         )}
       </div>
     </div>
@@ -651,19 +661,17 @@ function SummaryCards({ cfg, built, mode, simPlaying, liveStatus, liveStatusMsg,
 
 // ---------- settings page ----------
 
-function SettingsPage({ robloxName, setRobloxName, backendUrl, setBackendUrl, liveStatus, liveStatusMsg, mode, setMode }) {
+function SettingsPage({ backendUrl, setBackendUrl, liveStatus, liveStatusMsg, mode, setMode }) {
   const stateColor = liveStatus === "live" ? "live" : liveStatus === "unreachable" || liveStatus === "error" ? "bad" : liveStatus === "idle" || liveStatus === "no_config" ? "neutral" : "warn";
   return (
     <div className="gw-settings">
-      <div className="gw-panel-title">LIVE TRACKING &amp; SAVED ROUTES</div>
+      <div className="gw-panel-title">BACKEND CONNECTION</div>
       <p className="gw-settings-blurb">
         The browser can't reach 24data directly, so LIVE mode polls your own backend relay instead.
-        Run <code>24graph-backend/server.js</code> and point this at it. Your username also scopes
-        Save/Load on the Flight Plan page — routes are saved per username, not per browser.
+        Run <code>24graph-backend/server.js</code> and point this at it. This is the only thing needed
+        for Weather/ATIS and everything else that doesn't involve your own saved routes or live position -
+        your Roblox username (needed only for Save/Load and LIVE tracking) now lives on the Flight Plan page instead.
       </p>
-      <Field label="ROBLOX USERNAME">
-        <input className="gw-input" placeholder="Your Roblox username" value={robloxName} onChange={(e) => setRobloxName(e.target.value)} />
-      </Field>
       <Field label="BACKEND URL">
         <input className="gw-input" placeholder="https://two4graph.onrender.com" value={backendUrl} onChange={(e) => setBackendUrl(e.target.value)} />
       </Field>
@@ -810,6 +818,7 @@ function FlightPlanPage(props) {
     built, handleBuild, availableSids, availableStars,
     mode, setMode, simPlaying, setSimPlaying, simIdx, setSimIdx, currentIdx, currentNode, nextNode,
     liveStatus, liveStatusMsg, liveAircraft,
+    robloxName, setRobloxName,
     onReverse, onClear, onSave, onShare, savedRoutes, onLoad,
     cfgForCards,
   } = props;
@@ -824,6 +833,7 @@ function FlightPlanPage(props) {
         adep={adep} ades={ades} adepName={adepName} adesName={adesName}
         onReverse={onReverse} onClear={onClear} onSave={onSave} onShare={onShare}
         savedRoutes={savedRoutes} onLoad={onLoad}
+        robloxName={robloxName} setRobloxName={setRobloxName}
       />
 
       <div className="gw-tabs">
@@ -1117,7 +1127,7 @@ export default function Graph24() {
   };
   const handleSave = async () => {
     if (!built) { showToast("Build a route first"); return; }
-    if (!robloxName) { showToast("Set your Roblox username in Settings first"); return; }
+    if (!robloxName) { showToast("Enter your Roblox username above first"); return; }
     const name = window.prompt("Name this route:", `${adep}-${ades}`);
     if (!name) return;
     const cfg = { adep, adepRwy, sidIdx, sidTransIdx, enrouteFixes, ades, adesRwy, starIdx, starTransIdx };
@@ -1133,7 +1143,7 @@ export default function Graph24() {
     } catch (e) { showToast("Save failed — check the backend URL in Settings"); }
   };
   const handleLoad = async (name) => {
-    if (!robloxName) { showToast("Set your Roblox username in Settings first"); return; }
+    if (!robloxName) { showToast("Enter your Roblox username above first"); return; }
     try {
       const res = await fetch(`${backendUrl.replace(/\/$/, "")}/routes/${encodeURIComponent(robloxName)}/${encodeURIComponent(name)}`);
       if (!res.ok) throw new Error("not found");
@@ -1162,7 +1172,7 @@ export default function Graph24() {
     }
     if (!robloxName || !backendUrl) {
       setLiveStatus("no_config");
-      setLiveStatusMsg(!robloxName ? "Set your Roblox username in Settings." : "Set your backend URL in Settings.");
+      setLiveStatusMsg(!robloxName ? "Enter your Roblox username on the Flight Plan page." : "Set your backend URL in Settings.");
       return;
     }
     let cancelled = false;
@@ -1248,6 +1258,7 @@ export default function Graph24() {
               mode={mode} setMode={setMode} simPlaying={simPlaying} setSimPlaying={setSimPlaying}
               simIdx={simIdx} setSimIdx={setSimIdx} currentIdx={currentIdx} currentNode={currentNode} nextNode={nextNode}
               liveStatus={liveStatus} liveStatusMsg={liveStatusMsg} liveAircraft={liveAircraft}
+              robloxName={robloxName} setRobloxName={setRobloxName}
               onReverse={handleReverse} onClear={handleClear} onSave={handleSave} onShare={handleShare}
               savedRoutes={savedRoutes} onLoad={handleLoad}
               cfgForCards={cfgForCards}
@@ -1255,7 +1266,7 @@ export default function Graph24() {
           )}
           {section === "settings" && (
             <SettingsPage
-              robloxName={robloxName} setRobloxName={setRobloxName} backendUrl={backendUrl} setBackendUrl={setBackendUrl}
+              backendUrl={backendUrl} setBackendUrl={setBackendUrl}
               liveStatus={liveStatus} liveStatusMsg={liveStatusMsg} mode={mode} setMode={setMode}
             />
           )}
@@ -1351,7 +1362,12 @@ const CSS = `
 .gw-routeheader-title { display: flex; align-items: center; gap: 12px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; color: var(--text); }
 .gw-routeheader-star { color: var(--text-dim); margin-left: 4px; cursor: pointer; }
 .gw-routeheader-sub { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
-.gw-routeheader-actions { display: flex; gap: 8px; flex-wrap: wrap; position: relative; }
+.gw-routeheader-actions { display: flex; gap: 8px; flex-wrap: wrap; position: relative; align-items: center; }
+.gw-usernamewrap { display: flex; align-items: center; gap: 5px; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 0 10px; }
+.gw-usernamewrap-icon { color: var(--text-dim); flex-shrink: 0; }
+.gw-username-input { background: transparent; border: none; color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 8px 0; width: 130px; }
+.gw-username-input::placeholder { color: var(--text-dim); font-family: 'IBM Plex Sans', sans-serif; }
+.gw-username-input:focus { outline: none; }
 .gw-btn-ghost, .gw-btn-outline, .gw-btn-primary {
   display: flex; align-items: center; gap: 6px; font-family: 'IBM Plex Sans', sans-serif; font-size: 12.5px; font-weight: 500;
   padding: 8px 13px; border-radius: 6px; cursor: pointer;
